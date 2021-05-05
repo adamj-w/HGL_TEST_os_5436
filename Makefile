@@ -18,8 +18,8 @@ SYSTEM_IMAGE=$(BUILD_DIRECTORY)/image.iso
 SYSTEM_ROOT=$(BUILD_DIRECTORY)/root
 
 CINCLUDES=-I. \
-		  -I$(SOURCES_DIRECTORY) \
-		  -I$(LIBRARIES_DIRECTORY)
+		  -I$(SOURCES_DIRECTORY)/ \
+		  -I$(LIBRARIES_DIRECTORY)/
 
 CDEFINES=-D__BUILD_TARGET__=\""$(BUILD_TARGET)"\" \
 		 -D__BUILD_GITREF__=\""$(BUILD_GITREF)"\" \
@@ -79,6 +79,8 @@ KERNEL_BINARY=$(BUILD_DIRECTORY)/kernel.elf
 		 $(TARGET_DIRECTORY)/$(BUILD_SYSTEM)/config.mk \
 		 $(TARGET_DIRECTORY)/$(BUILD_SYSTEM)/$(BUILD_ARCH)/config.mk
 
+# --------------------------------------------------------------
+
 .PHONY: all run run-headless clean dump
 
 all: $(SYSTEM_IMAGE)
@@ -90,10 +92,39 @@ run-headless: $(SYSTEM_IMAGE)
 	qemu-system-x86_64 -serial mon:stdio -cdrom $(SYSTEM_IMAGE) -nographic
 
 clean:
-	echo $(BUILD_DIRECTORY)
+	@echo "removing $(BUILD_DIRECTORY)"
+	rm -r $(BUILD_DIRECTORY)
+
+# --------------------------------------------------------------
 
 $(SYSTEM_IMAGE): $(KERNEL_BINARY) $(LIBRARIES_ARCHIVES) grub.cfg
+	@mkdir -p $(IMAGE_DIRECTORY)/boot/grub/
+	@cp grub.cfg $(IMAGE_DIRECTORY)/boot/grub/
+	@cp $(KERNEL_BINARY) $(IMAGE_DIRECTORY)/boot/
+	grub-mkrescue -o $(SYSTEM_IMAGE) $(IMAGE_DIRECTORY) || \
+	grub2-mkrescue -o $(SYSTEM_IMAGE) $(IMAGE_DIRECTORY)
+
+# --------------------------------------------------------------
+
+$(BUILD_DIRECTORY)/libraries/libc.a: $(filter $(BUILD_DIRECTORY)/libraries/libc/%.o, $(LIBRARIES_OBJECTS))
+$(BUILD_DIRECTORY)/libraries/libruntime.a: $(filter $(BUILD_DIRECTORY)/libraries/libruntime/%.o, $(LIBRARIES_OBJECTS))
+$(BUILD_DIRECTORY)/libraries/libsystem.a: $(filter $(BUILD_DIRECTORY)/libraries/libsystem/%.o, $(LIBRARIES_OBJECTS)) \
+                                          $(filter $(BUILD_DIRECTORY)/targets/$(BUILD_SYSTEM)/%.o, $(LIBRARIES_OBJECTS)) \
+										  $(filter $(BUILD_DIRECTORY)/targets/$(BUILD_SYSTEM)/$(BUILD_ARCH)/%.o, $(LIBRARIES_OBJECTS))
+
+# --------------------------------------------------------------
 
 $(KERNEL_BINARY): $(KERNEL_OBJECTS)
 	$(DIRECTORY_GUARD)
 	$(COMMON_LD) $(KERNEL_LDFLAGS) -o $@ $^
+
+$(BUILD_DIRECTORY)/%.cpp.k.o: $(SOURCES_DIRECTORY)/%.cpp
+	$(DIRECTORY_GUARD)
+	$(COMMON_CXX) $(COMMON_CXXFLAGS) $(KERNEL_CXXFLAGS) -c -o $@ $<
+
+$(BUILD_DIRECTORY)/%.s.k.o: $(SOURCES_DIRECTORY)/%.s
+	$(DIRECTORY_GUARD)
+	$(COMMON_AS) $(KERNEL_ASFLAGS) -o $@ $<
+
+-include $(KERNEL_OBJECTS:.o=.d)
+-include $(LIBRARIES_OBJECTS:.o=.d)
