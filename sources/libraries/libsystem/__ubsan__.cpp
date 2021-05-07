@@ -57,6 +57,22 @@ extern "C" void __ubsan_handle_load_invalid_value(UbsanInvalidValueData* data, u
     assert_not_reached();
 }
 
+struct UbsanOutOfBoundsData
+{
+    UbsanSourceLocation location;
+    UbsanTypeDescriptor* array_type;
+    UbsanTypeDescriptor* index_type;
+};
+
+extern "C" void __ubsan_handle_out_of_bounds(UbsanOutOfBoundsData* data, unsigned long index)
+{
+    __unused(index);
+    __unused(data);
+
+    UBSAN_LOG("Out of bounds");
+    assert_not_reached();
+}
+
 struct UbsanPointerOverflowData
 {
     UbsanSourceLocation location;

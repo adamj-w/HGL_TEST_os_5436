@@ -65,8 +65,8 @@ static unsigned long long l_allocated = 0;
 static unsigned long long l_inuse = 0;
 
 static long long l_warningCount = 0;
-//static long long l_errorCount = 0;
-//static long long l_possibleOverruns = 0;
+static long long l_errorCount = 0;
+static long long l_possibleOverruns = 0;
 
 /*static void liballoc_dump()
 {
@@ -114,8 +114,7 @@ static AllocMajor* allocate_new_page(unsigned int size)
     return maj;
 }
 
-namespace hegel {
-namespace __alloc__ {
+namespace hegel::__alloc__ {
 
 extern "C" void* malloc(size_t req_size)
 {
@@ -319,5 +318,84 @@ extern "C" void* malloc(size_t req_size)
     return nullptr;
 }
 
+extern "C" void free(void* ptr)
+{
+    AllocMinor* min;
+    AllocMajor* maj;
+
+    if(ptr == nullptr) {
+        l_warningCount++;
+        // TODO: warn of wrongful call of free
+        return;
+    }
+
+    UNALIGN(ptr);
+
+    plugs::memory_lock();
+
+    min = (AllocMinor*)((uintptr_t)ptr - sizeof(AllocMinor));
+
+    if(min->magic != LIBALLOC_MAGIC) {
+        l_errorCount++;
+
+        if(((min->magic & 0xFFFFFF) == (LIBALLOC_MAGIC & 0xFFFFFF)) ||
+           ((min->magic & 0xFFFF) == (LIBALLOC_MAGIC & 0xFFFF)) ||
+           ((min->magic & 0xFF) == (LIBALLOC_MAGIC & 0xFF)))
+        {
+            l_possibleOverruns++;
+            // TODO: log the overrun
+        }
+
+        if(min->magic == LIBALLOC_DEAD) {
+            // TODO: anounce multiple free attempt
+        } else {
+            // TODO: bad free call
+        }
+
+        plugs::memory_unlock();
+        return;
+    }
+
+    maj = min->block;
+    l_inuse -= min->size;
+    maj->usage -= (min->size + sizeof(AllocMinor));
+    min->magic = LIBALLOC_DEAD;
+
+    if(min->next != nullptr)
+        min->next->prev = min->prev;
+    if(min->prev != nullptr)
+        min->prev->next = min->next;
+
+    if(min->prev == nullptr)
+        maj->first = min->next;
+    
+    if(maj->first == nullptr)
+    {
+        if(l_memRoot == maj)
+            l_memRoot = maj->next;
+        
+        if(l_bestBet == maj)
+            l_bestBet = nullptr;
+        
+        if(maj->prev != nullptr)
+            maj->prev->next = maj->next;
+        if(maj->next != nullptr)
+            maj->next->prev = maj->prev;
+        
+        l_allocated -= maj->size;
+
+        plugs::memory_free((uintptr_t)maj, maj->pages);
+    } else {
+        if(l_bestBet != nullptr) {
+            int bestSize = l_bestBet->size - l_bestBet->usage;
+            int majSize = maj->size - maj->usage;
+
+            if(majSize > bestSize)
+                l_bestBet = maj;
+        }
+    }
+
+    plugs::memory_unlock();
 }
+
 }
