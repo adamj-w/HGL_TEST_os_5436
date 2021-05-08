@@ -1,10 +1,10 @@
 #include <libruntime/Types.h>
 #include <libruntime/Assert.h>
 #include <libruntime/Macros.h>
+#include <libsystem/Logger.h>
 
-// TODO: actually log issues
 #define UBSAN_LOG(__args...) \
-    ((void)(0));
+    hegel::log(hegel::LogLevel::ERROR, data->location.filename, data->location.line, __args);
 
 struct UbsanSourceLocation
 {
@@ -104,6 +104,15 @@ extern "C" void __ubsan_handle_add_overflow(UbsanOverflowData* data, unsigned lo
     assert_not_reached();
 }
 
+extern "C" void __ubsan_handle_sub_overflow(UbsanOverflowData* data, unsigned long ulLHS, unsigned long ulRHS)
+{
+    __unused(ulLHS);
+    __unused(ulRHS);
+
+    UBSAN_LOG("Sub overflow");
+    assert_not_reached();
+}
+
 extern "C" void __ubsan_handle_divrem_overflow(UbsanOverflowData* data, unsigned long ulLHS, unsigned long ulRHS)
 {
     __unused(ulLHS);
@@ -121,7 +130,6 @@ struct UbsanNonnullReturnData
 
 extern "C" void  __ubsan_handle_nonnull_return_v1(UbsanNonnullReturnData* data, UbsanSourceLocation* loc_ptr)
 {
-    __unused(data);
     __unused(loc_ptr);
     UBSAN_LOG("Function return null");
     assert_not_reached();

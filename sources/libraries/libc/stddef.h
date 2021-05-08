@@ -10,6 +10,8 @@ typedef __SIZE_TYPE__ size_t;
 typedef __WCHAR_TYPE__ wchar_t;
 #endif
 
+#ifndef offsetof
 #define offsetof(type, member) ((size_t)&(((type*)0)->member))
+#endif
 
 #endif

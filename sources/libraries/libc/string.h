@@ -16,6 +16,7 @@ char* strncpy(char* dst, const char* src, size_t n);
 // Concatenation functions
 char* strcat(char* s1, const char* s2);
 char* strncat(char* s1, const char* s2, size_t n);
+void strapd(char* s, char c);
 
 // Comparison functions
 int memcmp(const void* s1, const void* s2, size_t n);
@@ -38,6 +39,7 @@ char* strtok(char* s1, const char* s2);
 void* memset(void* s, int c, size_t n);
 char* strerror(int errnum);
 size_t strlen(const char* s);
+void strrvs(char* s);
 
 #ifdef __cplusplus
 }

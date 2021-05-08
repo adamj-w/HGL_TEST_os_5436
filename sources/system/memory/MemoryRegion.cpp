@@ -63,6 +63,17 @@ MemoryRegion MemoryRegion::from_page(size_t page, size_t page_count)
     return MemoryRegion(page, page_count);
 }
 
+void MemoryRegion::merge(MemoryRegion& other)
+{
+    assert(is_continuous_with(other));
+    
+    if(_base_page > other._base_page) {
+        _base_page = other._base_page;
+    }
+
+    _page_count = _page_count + other._page_count;
+}
+
 MemoryRegion MemoryRegion::take(size_t page_count)
 {
     assert(_page_count >= page_count);
@@ -70,6 +81,33 @@ MemoryRegion MemoryRegion::take(size_t page_count)
     _page_count -= page_count;
 
     return MemoryRegion::from_page(_base_page + _page_count, page_count);
+}
+
+MemoryRegion MemoryRegion::half_under(MemoryRegion split) 
+{
+    if(is_overlapping_with(split) && _base_page < split._base_page) {
+        return MemoryRegion::from_page(_base_page, split._base_page - _base_page);
+    }
+    return MemoryRegion::empty();
+}
+
+MemoryRegion MemoryRegion::half_over(MemoryRegion split) 
+{
+    if(is_overlapping_with(split) && _base_page > split._base_page) {
+        return MemoryRegion::from_page(split._base_page, _base_page - split._base_page);
+    }
+    return MemoryRegion::empty();
+}
+
+bool MemoryRegion::is_overlapping_with(MemoryRegion other)
+{
+    return _base_page < other._base_page + other._page_count &&
+           _base_page + _page_count > other._base_page;
+}
+
+bool MemoryRegion::is_continuous_with(MemoryRegion other)
+{
+    return end_page() == other._base_page || other.end_page() == _base_page;
 }
 
 bool MemoryRegion::is_empty() { return _page_count == 0; }

@@ -36,7 +36,17 @@ void* operator new(size_t size)
     return __alloc__::malloc(size - size % 4 + 4);
 }
 
+void* operator new[](size_t size)
+{
+    return __alloc__::malloc(size - size % 4 + 4);
+}
+
 void operator delete(void* ptr)
+{
+    __alloc__::free(ptr);
+}
+
+void operator delete[](void* ptr) 
 {
     __alloc__::free(ptr);
 }

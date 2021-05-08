@@ -2,6 +2,7 @@
 #include <system/memory/MemoryRegionAllocator.h>
 
 #include <libruntime/Assert.h>
+#include <libsystem/Logger.h>
 
 namespace hegel::memory {
 
@@ -28,14 +29,14 @@ MemoryRegion alloc_region(size_t page_count)
         region = _bootstrap.take(page_count);
 
         if(_bootstrap.is_empty()) {
-            // TODO: info message about it being empty
+            logger_info("Used all the bootstrap memory");
         }
     } else {
         region = _allocator->alloc_region(page_count);
     }
 
     if(region.is_empty()) {
-        // TODO: log out of memory
+        // TODO: panic because were out of it
     }
 
     return region;
@@ -43,9 +44,30 @@ MemoryRegion alloc_region(size_t page_count)
 
 void free_region(MemoryRegion region) 
 {
-    __unused(region);
+    auto kernel = arch::get_kernel_region();
 
-    // TODO: finish method
+    if(region.is_overlapping_with(kernel)) {
+        MemoryRegion lower = region.half_under(kernel);
+
+        if(!lower.is_empty()) {
+            free_region(lower);
+        }
+
+        MemoryRegion upper = region.half_over(kernel);
+
+        if(!upper.is_empty()) {
+            free_region(lower);
+        }
+    } else if(!_bootstrapped) {
+        logger_info("Bootstrapping with {}", region);
+
+        _bootstrap = region;
+        _bootstrapped = true;
+
+        _allocator = new MemoryRegionAllocator();
+    } else {
+        _allocator->free_region(region);
+    }
 }
 
 }
