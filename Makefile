@@ -113,7 +113,8 @@ $(SYSTEM_IMAGE): $(KERNEL_BINARY) $(LIBRARIES_ARCHIVES) grub.cfg
 
 $(BUILD_DIRECTORY)/%.cpp.o: $(SOURCES_DIRECTORY)/%.cpp
 	$(DIRECTORY_GUARD)
-	$(COMMON_CXX) $(COMMON_CXXFLAGS) -c -o $@ $<
+	@echo "[CC] $@"
+	@$(COMMON_CXX) $(COMMON_CXXFLAGS) -c -o $@ $<
 
 # --------------------------------------------------------------
 
@@ -127,15 +128,18 @@ $(BUILD_DIRECTORY)/libraries/libsystem.a: $(filter $(BUILD_DIRECTORY)/libraries/
 
 $(KERNEL_BINARY): $(KERNEL_OBJECTS)
 	$(DIRECTORY_GUARD)
-	$(COMMON_LD) $(KERNEL_LDFLAGS) -o $@ $^
+	@echo "[KERN][LD] $@"
+	@$(COMMON_LD) $(KERNEL_LDFLAGS) -o $@ $^
 
 $(BUILD_DIRECTORY)/%.cpp.k.o: $(SOURCES_DIRECTORY)/%.cpp
 	$(DIRECTORY_GUARD)
-	$(COMMON_CXX) $(COMMON_CXXFLAGS) $(KERNEL_CXXFLAGS) -c -o $@ $<
+	@echo "[KERN][CXX] $@"
+	@$(COMMON_CXX) $(COMMON_CXXFLAGS) $(KERNEL_CXXFLAGS) -c -o $@ $<
 
 $(BUILD_DIRECTORY)/%.s.k.o: $(SOURCES_DIRECTORY)/%.s
 	$(DIRECTORY_GUARD)
-	$(COMMON_AS) $(KERNEL_ASFLAGS) -o $@ $<
+	@echo "[KERN][AS] $@"
+	@$(COMMON_AS) $(KERNEL_ASFLAGS) -o $@ $<
 
 -include $(KERNEL_OBJECTS:.o=.d)
 -include $(LIBRARIES_OBJECTS:.o=.d)

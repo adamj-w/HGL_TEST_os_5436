@@ -1,11 +1,13 @@
 #include <arch/x86/device/SerialStream.h>
 #include <arch/x86/boot/Multiboot.h>
+#include <arch/x86/segmentation/Segmentation.h>
 
 #include <system/memory/Memory.h>
 
 #include <libsystem/Stdio.h>
 #include <libsystem/Logger.h>
 #include <libsystem/__alloc__.h>
+#include <system/System.h>
 
 using namespace hegel::arch;
 using namespace hegel::arch::x86;
@@ -34,7 +36,7 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
 
     if(!multiboot.is_valid()) {
         logger_fatal("Invalid bootloader, please boot with multiboot2 specification");
-        // TODO: panic the kernel
+        PANIC("Invalid bootloader, please try with valid multiboot2 loader.");
     } else {
         logger_info("Found valid bootloader with name \"{}\"", multiboot.bootloader());
     }
@@ -53,10 +55,12 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
     });
     
     if(!memory::is_bootstrapped()) {
-        // TODO: PANIC
+        PANIC("Failed to bootstrap kernel memory allocation");
     }
 
     __alloc__::liballoc_dump();
+
+    segmentation_initialize();
 }
 
 }

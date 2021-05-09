@@ -5,7 +5,6 @@
 
 namespace hegel::memory {
 
-// TODO: make formattable
 class MemoryRegion : public hegel::Formattable
 {
 private:

@@ -1,5 +1,6 @@
 #include <system/memory/Memory.h>
 #include <system/memory/MemoryRegionAllocator.h>
+#include <system/System.h>
 
 #include <libruntime/Assert.h>
 #include <libsystem/Logger.h>
@@ -20,7 +21,7 @@ MemoryRegion alloc_region(size_t page_count)
     assert(page_count > 0);
 
     if(!_bootstrapped) {
-        // TODO: panic the kernel
+        PANIC("Either out of memory or allocated before parsing bootloader info!");
     }
 
     MemoryRegion region = MemoryRegion::empty();
@@ -36,7 +37,7 @@ MemoryRegion alloc_region(size_t page_count)
     }
 
     if(region.is_empty()) {
-        // TODO: panic because were out of it
+        PANIC("Failed to allocate. Out of memory!");
     }
 
     return region;

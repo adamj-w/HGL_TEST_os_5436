@@ -1,6 +1,7 @@
 #include <libc/string.h>
 #include <libc/stdio.h>
 #include <libruntime/Assert.h>
+#include <libsystem/Logger.h>
 #include <libsystem/__alloc__.h>
 #include <libsystem/__plugs__.h>
 #include <libsystem/Stdio.h>
@@ -154,7 +155,7 @@ extern "C" void* malloc(size_t req_size)
 
     if(size == 0) {
         l_warningCount++;
-        // TODO: warn about malloc
+        logger_warn("malloc(0) called from {#x}", __builtin_return_address(0));
         plugs::memory_unlock();
         return malloc(1);
     }
@@ -164,7 +165,7 @@ extern "C" void* malloc(size_t req_size)
 
         if(l_memRoot == nullptr) {
             plugs::memory_unlock();
-            // TODO: error message
+            logger_error("Initial memory block failed to initailize!");
             assert_not_reached();
         }
     }
@@ -331,7 +332,7 @@ extern "C" void* malloc(size_t req_size)
 
     plugs::memory_unlock();
 
-    // TODO: log fatal out of memory
+    logger_fatal("Ran out of memory after {#d} bytes.", l_inuse);
     assert_not_reached();
 
     return nullptr;
@@ -344,7 +345,7 @@ extern "C" void free(void* ptr)
 
     if(ptr == nullptr) {
         l_warningCount++;
-        // TODO: warn of wrongful call of free
+        logger_warn("Attempted free of invalid address from {#x}.", __builtin_return_address(0));
         return;
     }
 
@@ -362,13 +363,13 @@ extern "C" void free(void* ptr)
            ((min->magic & 0xFF) == (LIBALLOC_MAGIC & 0xFF)))
         {
             l_possibleOverruns++;
-            // TODO: log the overrun
+            logger_warn("Possible overrun of allocated block at {#x}", min);
         }
 
         if(min->magic == LIBALLOC_DEAD) {
-            // TODO: anounce multiple free attempt
+            logger_warn("Multiple free attempts on {#x} from {#x}", ptr, __builtin_return_address(0));
         } else {
-            // TODO: bad free call
+            logger_error("Invalid call of free({#x}) from {#x}", ptr, __builtin_return_address(0));
         }
 
         plugs::memory_unlock();
