@@ -17,6 +17,8 @@ DIRECTORY_GUARD=@mkdir -p $(@D)
 SYSTEM_IMAGE=$(BUILD_DIRECTORY)/image.iso
 SYSTEM_ROOT=$(BUILD_DIRECTORY)/root
 
+QEMU?=qemu-system-i386
+
 CINCLUDES=-I. \
 		  -I$(SOURCES_DIRECTORY)/ \
 		  -I$(LIBRARIES_DIRECTORY)/
@@ -39,7 +41,7 @@ COMMON_LDFLAGS=
 COMMON_ASFLAGS=-f elf32
 COMMON_ARFLAGS=
 
-KERNEL_CXXFLAGS=-ffreestanding -fno-stack-protector -nostdlib -nostdinc++
+KERNEL_CXXFLAGS=-ffreestanding -fno-stack-protector -nostdlib -nostdinc++ -g
 KERNEL_LDFLAGS=-m elf_i386 -T $(ARCH_DIRECTORY)/system.ld
 KERNEL_ASFLAGS=-f elf32
 
@@ -81,15 +83,18 @@ KERNEL_BINARY=$(BUILD_DIRECTORY)/kernel.elf
 
 # --------------------------------------------------------------
 
-.PHONY: all run run-headless clean dump
+.PHONY: all run run-headless clean dump debug
 
 all: $(SYSTEM_IMAGE)
 
 run: $(SYSTEM_IMAGE)
-	qemu-system-x86_64 -serial mon:stdio -cdrom $(SYSTEM_IMAGE)
+	$(QEMU) -serial mon:stdio -cdrom $(SYSTEM_IMAGE)
+
+debug: $(SYSTEM_IMAGE)
+	$(QEMU) -serial mon:stdio -cdrom $(SYSTEM_IMAGE) -s -S
 
 run-headless: $(SYSTEM_IMAGE)
-	qemu-system-x86_64 -serial mon:stdio -cdrom $(SYSTEM_IMAGE) -nographic
+	$(QEMU) -serial mon:stdio -cdrom $(SYSTEM_IMAGE) -nographic
 
 clean:
 	@echo "removing $(BUILD_DIRECTORY)"

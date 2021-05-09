@@ -1,7 +1,9 @@
 #include <libc/string.h>
+#include <libc/stdio.h>
 #include <libruntime/Assert.h>
 #include <libsystem/__alloc__.h>
 #include <libsystem/__plugs__.h>
+#include <libsystem/Stdio.h>
 
 using namespace hegel;
 
@@ -68,13 +70,30 @@ static long long l_warningCount = 0;
 static long long l_errorCount = 0;
 static long long l_possibleOverruns = 0;
 
-/*static void liballoc_dump()
+extern "C" void liballoc_dump()
 {
-    //AllocMajor* maj = l_memRoot;
-    //AllocMinor* min = nullptr;
+    AllocMajor* maj = l_memRoot;
+    AllocMinor* min = nullptr;
 
-    // TODO: printf all the information
-}*/
+    printf("liballoc: ----- Memory Data ----------\n");
+    printf("liballoc: System memory allocated: %i bytes\n", (int)l_allocated);
+    printf("liballoc: Memory in use (malloc'ed): %i bytes\n", (int)l_inuse);
+    printf("liballoc: Warning count: %i\n", (int)l_warningCount);
+    printf("liballoc: Error count: %i\n", (int)l_errorCount);
+    printf("liballoc: Possible overruns: %i\n", (int)l_possibleOverruns);
+
+    while(maj != nullptr) {
+        printf("liballoc: 0x%X: total = %i, used = %i\n", (unsigned int)maj, (int)maj->size, (int)maj->usage);
+
+        min = maj->first;
+        while(min != nullptr) {
+            printf("liballoc:    0x%X: %i bytes\n", (unsigned int)min, (int)min->size);
+            min = min->next;
+        }
+
+        maj = maj->next;
+    }
+}
 
 static AllocMajor* allocate_new_page(unsigned int size)
 {

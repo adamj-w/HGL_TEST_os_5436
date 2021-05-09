@@ -113,6 +113,14 @@ extern "C" void __ubsan_handle_sub_overflow(UbsanOverflowData* data, unsigned lo
     assert_not_reached();
 }
 
+extern "C" void __ubsan_handle_mul_overflow(UbsanOverflowData* data, unsigned long ulLHS, unsigned long ulRHS) {
+    __unused(ulLHS);
+    __unused(ulRHS);
+
+    UBSAN_LOG("Mul overflow");
+    assert_not_reached();
+}
+
 extern "C" void __ubsan_handle_divrem_overflow(UbsanOverflowData* data, unsigned long ulLHS, unsigned long ulRHS)
 {
     __unused(ulLHS);
@@ -133,4 +141,53 @@ extern "C" void  __ubsan_handle_nonnull_return_v1(UbsanNonnullReturnData* data, 
     __unused(loc_ptr);
     UBSAN_LOG("Function return null");
     assert_not_reached();
+}
+
+struct UbsanUnreachableData
+{
+    UbsanSourceLocation location;
+};
+
+extern "C" void __ubsan_handle_builtin_unreachable(UbsanUnreachableData *data)
+{
+    UBSAN_LOG("Unreachable reached");
+    assert_not_reached();
+}
+
+typedef int fixint_t;
+
+static inline fixint_t __muloXi4(fixint_t a, fixint_t b, int *overflow) {
+  const int N = (int)(sizeof(fixint_t) * __CHAR_BIT__);
+  const fixint_t MIN = (fixint_t)1 << (N - 1);
+  const fixint_t MAX = ~MIN;
+  *overflow = 0;
+  fixint_t result = a * b;
+  if (a == MIN) {
+    if (b != 0 && b != 1)
+      *overflow = 1;
+    return result;
+  }
+  if (b == MIN) {
+    if (a != 0 && a != 1)
+      *overflow = 1;
+    return result;
+  }
+  fixint_t sa = a >> (N - 1);
+  fixint_t abs_a = (a ^ sa) - sa;
+  fixint_t sb = b >> (N - 1);
+  fixint_t abs_b = (b ^ sb) - sb;
+  if (abs_a < 2 || abs_b < 2)
+    return result;
+  if (sa == sb) {
+    if (abs_a > MAX / abs_b)
+      *overflow = 1;
+  } else {
+    if (abs_a > MIN / -abs_b)
+      *overflow = 1;
+  }
+  return result;
+}
+
+extern "C" int __mulodi4(int a, int b, int *overflow) {
+  return __muloXi4(a, b, overflow);
 }

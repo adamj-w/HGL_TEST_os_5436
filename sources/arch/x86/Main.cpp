@@ -1,9 +1,11 @@
-#include <libc/stdint.h>
-
 #include <arch/x86/device/SerialStream.h>
+#include <arch/x86/boot/Multiboot.h>
+
+#include <system/memory/Memory.h>
 
 #include <libsystem/Stdio.h>
 #include <libsystem/Logger.h>
+#include <libsystem/__alloc__.h>
 
 using namespace hegel::arch;
 using namespace hegel::arch::x86;
@@ -26,10 +28,35 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
 
     logger_info("Booting...");
     logger_info("Hegel Kernel ({} {})", __BUILD_TARGET__, __BUILD_GITREF__);
-    logger_info("Kernel built on {}", __BUILD_UNAME__);
+    logger_info("Kernel built on \"{}\"", __BUILD_UNAME__);
 
-    ((void)multiboot_magic);
-    ((void)multiboot_addr);
+    auto multiboot = x86::Multiboot(multiboot_addr, multiboot_magic);
+
+    if(!multiboot.is_valid()) {
+        logger_fatal("Invalid bootloader, please boot with multiboot2 specification");
+        // TODO: panic the kernel
+    } else {
+        logger_info("Found valid bootloader with name \"{}\"", multiboot.bootloader());
+    }
+
+    multiboot.with_memory_map([&](MemoryMapEntry entry) -> Iteration {
+        if(entry.is_avail()) {
+            logger_info("Marking {} as free usable memory by the kernel.", entry);
+            memory::free_region(entry.region());
+        } else if(entry.is_bad()) {
+            logger_warn("Badram at {}, skipping", entry.region());
+        } else {
+            logger_info("Skipping {}", entry);
+        }
+
+        return Iteration::CONTINUE;
+    });
+    
+    if(!memory::is_bootstrapped()) {
+        // TODO: PANIC
+    }
+
+    __alloc__::liballoc_dump();
 }
 
 }

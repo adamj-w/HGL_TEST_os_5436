@@ -1,5 +1,28 @@
 #include <libc/string.h>
 
+void* memcpy(void* dst, const void* src, size_t n)
+{
+	unsigned int* dstp = (unsigned int*)dst;
+	unsigned int* srcp = (unsigned int*)src;
+
+	while(n >= sizeof(unsigned int))
+	{
+		*dstp++ = *srcp++;
+		n -= sizeof(unsigned int);
+	}
+
+	char* dstc = (char*)dstp;
+	char* srcc = (char*)srcp;
+
+	while(n >= sizeof(char))
+	{
+		*dstc++ = *srcc++;
+		n -= sizeof(char);
+	}
+
+	return dst;
+}
+
 size_t strlen(const char* str)
 {
     size_t len = 0;
