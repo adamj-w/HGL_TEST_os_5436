@@ -1,6 +1,6 @@
 #pragma once
 
-#include <system/memory/MemoryRegion.h>
+#include "MemoryRegion.h"
 
 #include <libruntime/Vector.h>
 

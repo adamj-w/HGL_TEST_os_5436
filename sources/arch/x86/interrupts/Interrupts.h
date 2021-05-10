@@ -12,13 +12,13 @@ namespace hegel::arch::x86 {
 #define IDT_TRAPGATE 0x8F
 #define IDT_ENTRY_COUNT 256
 
-struct __packed IdtDescriptor
+struct __packed IDTDescriptor
 {
     uint16_t size;
     uint32_t offset;
 };
 
-struct __packed IdtEntry
+struct __packed IDTEntry
 {
     uint16_t offset0_15; // offset bits 0..15
     uint16_t selector;   // a code segment selector in GDT or LDT
@@ -26,9 +26,9 @@ struct __packed IdtEntry
     uint8_t type_attr;    // type and attributes
     uint16_t offset16_31; // offset bits 16..31
 
-    static IdtEntry create(uintptr_t offset, uint32_t selector, uint8_t type)
+    static IDTEntry create(uintptr_t offset, uint32_t selector, uint8_t type)
     {
-        IdtEntry entry;
+        IDTEntry entry;
 
         entry.offset0_15 = offset & 0xffff;
         entry.selector = selector;
@@ -40,6 +40,14 @@ struct __packed IdtEntry
     }
 };
 
-void interupts_initialise();
+struct __packed InterruptStackFrame
+{
+    uint32_t gs, fs, es, ds;
+    uint32_t edi, esi, ebp, esp, ebx, edx, ecx, eax;
+    uint32_t intno, err;
+    uint32_t eip, cs, eflags;
+};
+
+void interrupts_initialize();
 
 }

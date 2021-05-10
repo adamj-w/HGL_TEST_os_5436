@@ -1,6 +1,6 @@
 #pragma once
 
-#include <arch/x86/x86.h>
+#include "../x86.h"
 #include <libruntime/Types.h>
 #include <libruntime/Error.h>
 #include <libsystem/Stream.h>

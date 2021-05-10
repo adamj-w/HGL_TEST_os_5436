@@ -1,6 +1,6 @@
-#include <system/memory/Memory.h>
-#include <system/memory/MemoryRegionAllocator.h>
-#include <system/System.h>
+#include "Memory.h"
+#include "MemoryRegionAllocator.h"
+#include "../System.h"
 
 #include <libruntime/Assert.h>
 #include <libsystem/Logger.h>

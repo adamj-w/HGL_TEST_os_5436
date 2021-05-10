@@ -1,13 +1,14 @@
-#include <arch/x86/device/SerialStream.h>
-#include <arch/x86/boot/Multiboot.h>
-#include <arch/x86/segmentation/Segmentation.h>
+#include "device/SerialStream.h"
+#include "boot/Multiboot.h"
+#include "segmentation/Segmentation.h"
+#include "interrupts/Interrupts.h"
 
 #include <system/memory/Memory.h>
+#include <system/System.h>
 
 #include <libsystem/Stdio.h>
 #include <libsystem/Logger.h>
 #include <libsystem/__alloc__.h>
-#include <system/System.h>
 
 using namespace hegel::arch;
 using namespace hegel::arch::x86;
@@ -61,6 +62,9 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
     __alloc__::liballoc_dump();
 
     segmentation_initialize();
+    interrupts_initialize();
+
+    
 }
 
 }

@@ -3,7 +3,7 @@
 #include <libruntime/RefPtr.h>
 #include <libruntime/Types.h>
 
-#include "system/memory/MemoryRegion.h"
+#include "MemoryRegion.h"
 
 namespace hegel::memory {
 

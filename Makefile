@@ -47,7 +47,8 @@ KERNEL_ASFLAGS=-f elf32
 
 LIBRARIES=libruntime \
 		  libsystem \
-		  libc
+		  libc \
+		  libterminal
 
 LIBRARIES_DIRECTORY=$(SOURCES_DIRECTORY)/libraries
 
@@ -72,6 +73,7 @@ KERNEL_SOURCES=$(wildcard $(ARCH_DIRECTORY)/*.s) \
 			   $(wildcard $(LIBRARIES_DIRECTORY)/libc/*.cpp) \
 			   $(wildcard $(LIBRARIES_DIRECTORY)/libruntime/*.cpp) \
 			   $(wildcard $(LIBRARIES_DIRECTORY)/libsystem/*.cpp) \
+			   $(wildcard $(LIBRARIES_DIRECTORY)/libterminal/*.cpp)
 
 KERNEL_OBJECTS=$(patsubst $(SOURCES_DIRECTORY)/%, $(BUILD_DIRECTORY)/%.k.o, $(KERNEL_SOURCES))
 
@@ -119,6 +121,7 @@ $(BUILD_DIRECTORY)/%.cpp.o: $(SOURCES_DIRECTORY)/%.cpp
 # --------------------------------------------------------------
 
 $(BUILD_DIRECTORY)/libraries/libc.a: $(filter $(BUILD_DIRECTORY)/libraries/libc/%.o, $(LIBRARIES_OBJECTS))
+$(BUILD_DIRECTORY)/libraries/libterminal.a: $(filter $(BUILD_DIRECTORY)/libraries/libterminal/%.o, $(LIBRARIES_OBJECTS))
 $(BUILD_DIRECTORY)/libraries/libruntime.a: $(filter $(BUILD_DIRECTORY)/libraries/libruntime/%.o, $(LIBRARIES_OBJECTS))
 $(BUILD_DIRECTORY)/libraries/libsystem.a: $(filter $(BUILD_DIRECTORY)/libraries/libsystem/%.o, $(LIBRARIES_OBJECTS)) \
                                           $(filter $(BUILD_DIRECTORY)/targets/$(BUILD_SYSTEM)/%.o, $(LIBRARIES_OBJECTS)) \

@@ -1,0 +1,53 @@
+#include "Interrupts.h"
+#include "PIC.h"
+#include "../x86.h"
+
+#include <libsystem/Logger.h>
+
+#include "arch/Arch.h"
+
+namespace hegel::arch::x86 {
+
+IDTEntry idt_entries[IDT_ENTRY_COUNT] = {};
+IDTDescriptor idt_descriptor = {};
+
+extern "C" uintptr_t __interrupt_vector[];
+
+void interrupts_initialize()
+{
+    logger_info("Initializing system interrupts.");
+
+    pic_remap();
+
+    for(size_t i = 0; i < 32; i++) {
+        idt_entries[i] = IDTEntry::create(__interrupt_vector[i], 0x08, IDT_INTGATE);
+    }
+
+    for(size_t i = 32; i < 48; i++) {
+        idt_entries[i] = IDTEntry::create(__interrupt_vector[i], 0x08, IDT_TRAPGATE);
+    }
+
+    idt_entries[128] = IDTEntry::create(__interrupt_vector[48], 0x08, IDT_TRAPGATE);
+
+    logger_info("Loading the IDT.");
+    x86::load_idt((uint32_t)&idt_descriptor);
+    sti();
+    logger_info("Interrupts should be working.");
+}
+
+extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFrame)
+{
+    if(stackFrame.intno < 32) {
+        logger_fatal("CPU exception: {} error={}", stackFrame.intno, stackFrame.err);
+    }
+
+    // TODO: int number 32 ticks the scheduler
+
+    logger_info("Executing intno: {}", stackFrame.intno);
+
+    pic_ack(stackFrame.intno);
+
+    return esp;
+}
+
+}

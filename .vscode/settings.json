@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "__string": "cpp",
+        "functional": "cpp"
+    }
+}

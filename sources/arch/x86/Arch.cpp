@@ -1,5 +1,5 @@
-#include <arch/Arch.h>
-#include <arch/x86/x86.h>
+#include "arch/Arch.h"
+#include "x86.h"
 
 using namespace hegel::memory;
 

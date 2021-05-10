@@ -1,7 +1,7 @@
 #pragma once
 
-#include <system/memory/MemoryRegion.h>
-#include <system/memory/MemoryPool.h>
+#include "MemoryRegion.h"
+#include "MemoryPool.h"
 
 #include <arch/Arch.h>
 
