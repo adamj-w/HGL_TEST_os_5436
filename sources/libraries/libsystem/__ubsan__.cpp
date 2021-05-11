@@ -121,6 +121,13 @@ extern "C" void __ubsan_handle_mul_overflow(UbsanOverflowData* data, unsigned lo
     assert_not_reached();
 }
 
+extern "C" void __ubsan_handle_negate_overflow(UbsanOverflowData* data, unsigned long value) {
+    __unused(value);
+
+    UBSAN_LOG("Negate overflow");
+    assert_not_reached();
+}
+
 extern "C" void __ubsan_handle_divrem_overflow(UbsanOverflowData* data, unsigned long ulLHS, unsigned long ulRHS)
 {
     __unused(ulLHS);
@@ -128,6 +135,22 @@ extern "C" void __ubsan_handle_divrem_overflow(UbsanOverflowData* data, unsigned
     __unused(data);
 
     UBSAN_LOG("Divrem overflow");
+    assert_not_reached();
+}
+
+struct UbsantShiftOutOfBoundsData
+{
+    UbsanSourceLocation location;
+    UbsanTypeDescriptor *lhs_type;
+    UbsanTypeDescriptor *rhs_type;
+};
+
+extern "C" void __ubsan_handle_shift_out_of_bounds(UbsantShiftOutOfBoundsData *data, unsigned long lhs, unsigned long rhs)
+{
+    __unused(lhs);
+    __unused(rhs);
+
+    UBSAN_LOG("Shift out of bounds");
     assert_not_reached();
 }
 

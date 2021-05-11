@@ -2,7 +2,7 @@
 
 #include "Cell.h"
 
-#include <libsystem/Stream.h>
+#include <libsystem/Unicode.h>
 
 namespace hegel::term {
 
@@ -35,9 +35,9 @@ struct Parameter
     bool empty;
 };
 
-class Terminal : public hegel::Stream
+class Terminal : public hegel::UTF8Stream
 {
-private:
+protected:
     Cursor _cursor;
     Cursor _saved_cursor;
 
@@ -74,6 +74,25 @@ public:
     {}
 
     ~Terminal() {}
+
+    void clear() { clear(0, 0, _w, _h); }
+    void clear(int x1, int y1, int x2, int y2);
+    void clear_line(int line);
+
+    void set_cursor(int x, int y);
+    void move_cursor(int dx, int dy);
+
+    void scroll(int num_lines);
+    void new_line();
+
+    void backspace();
+    void append(Codepoint ch);
+
+    void do_ansi(Codepoint ch, const Parameter* params, int param_count);
+    virtual Error write_codepoint(Codepoint ch);
+
+    virtual void on_cell_updated(int x, int y, Cell c) = 0;
+    virtual void on_cursor_moved(Cursor cursor) = 0;
 };
 
 }

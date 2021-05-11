@@ -1,7 +1,7 @@
 #pragma once
 
-// TODO: write assert macro
-#define assert(__expr) ((void)(__expr))
+extern "C" void __assert_failed(const char* file, int line, const char* expr);
+#define assert(__expr) if(!(__expr)) { __assert_failed(__FILE__, __LINE__, #__expr); }
 
-// TODO: write assert macro
-#define assert_not_reached() ((void)(0))
+extern "C" void __assert_not_reach_reached(const char* file, int line);
+#define assert_not_reached() __assert_not_reach_reached(__FILE__, __LINE__);

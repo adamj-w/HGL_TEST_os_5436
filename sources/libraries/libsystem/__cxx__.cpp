@@ -1,6 +1,7 @@
 #include <libruntime/Macros.h>
 #include <libruntime/Types.h>
 #include <libruntime/Assert.h>
+#include <libsystem/Logger.h>
 #include <libsystem/__alloc__.h>
 
 using namespace hegel;
@@ -29,6 +30,12 @@ extern "C" int __cxa_atexit(void (*f)(void*), void* objptr, void* dso)
     __atexit_function_count++;
 
     return 0;
+}
+
+extern "C" void __cxa_pure_virtual()
+{
+    logger_error("Calling pure virtual function.");
+    assert_not_reached();
 }
 
 void* operator new(size_t size)

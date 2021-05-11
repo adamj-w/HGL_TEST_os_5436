@@ -1,5 +1,6 @@
 #pragma once
 
+#include <libsystem/Unicode.h>
 #include "Attributes.h"
 
 namespace hegel::term {
@@ -8,16 +9,16 @@ class Cell
 {
 private:
     Attributes _attribs;
-    char _c;
+    hegel::Codepoint _c;
     bool _dirty;
 
 public:
     Attributes attributes() const { return _attribs; }
-    char codepoint() const { return _c; }
+    hegel::Codepoint codepoint() const { return _c; }
     bool dirty() const { return _dirty; }
 
     Cell() : _attribs(), _c(' '), _dirty(true) {}
-    Cell(Attributes attribs, char c) : _attribs(attribs), _c(c), _dirty(true) {}
+    Cell(Attributes attribs, char32_t c) : _attribs(attribs), _c(c), _dirty(true) {}
 
     Cell(Cell& other) : _attribs(other._attribs), _c(other._c), _dirty(other._dirty) {}
     Cell(Cell&& other) : _attribs(other._attribs), _c(other._c), _dirty(other._dirty) {}

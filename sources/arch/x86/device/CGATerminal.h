@@ -1,6 +1,7 @@
 #pragma once
 
 #include <libruntime/Macros.h>
+#include <libterminal/Terminal.h>
 
 namespace hegel::arch::x86 {
 
@@ -41,17 +42,28 @@ public:
     }
 };
 
-// TODO: make this a terminal
-class CGATerminal
+class CGATerminal : public term::Terminal
 {
 private: 
-    CGACell* _cells;
+    CGACell* _vga_cells;
 
 public:
-    CGATerminal(void* addr) : _cells(reinterpret_cast<CGACell*>(addr)) {
+    CGATerminal(void* addr) 
+        : hegel::term::Terminal(80, 25)
+        , _vga_cells(reinterpret_cast<CGACell*>(addr)) 
+    {
         clear_memory();
         enable_cursor();
     }
+
+    ~CGATerminal() {}
+
+    void clear_memory();
+    void enable_cursor();
+    void disable_cursor();
+
+    void on_cell_updated(int x, int y, hegel::term::Cell c);
+    void on_cursor_moved(hegel::term::Cursor cursor);
 };
 
 }

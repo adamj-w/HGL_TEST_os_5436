@@ -3,6 +3,7 @@
 #include <libruntime/SpinLock.h>
 
 #include "arch/Arch.h"
+#include "system/System.h"
 #include "system/memory/Memory.h"
 
 namespace hegel::plugs {
@@ -37,6 +38,16 @@ ErrorOr<uintptr_t> memory_alloc(size_t page_count)
 void memory_free(uintptr_t addr, size_t page_count)
 {
     hegel::memory::free_region(hegel::memory::MemoryRegion::from_aligned_address(addr, page_count));
+}
+
+void assert_failed() 
+{
+    PANIC("Assertion failed in kernel.");
+}
+
+void assert_not_reached_reached() 
+{
+    PANIC("Reached unreachable assertion in kernel.");
 }
 
 }

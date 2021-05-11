@@ -1,4 +1,5 @@
 #include "device/SerialStream.h"
+#include "device/CGATerminal.h"
 #include "boot/Multiboot.h"
 #include "segmentation/Segmentation.h"
 #include "interrupts/Interrupts.h"
@@ -59,12 +60,10 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
         PANIC("Failed to bootstrap kernel memory allocation");
     }
 
-    __alloc__::liballoc_dump();
-
     segmentation_initialize();
     interrupts_initialize();
 
-    
+    hegel::stdout = make<CGATerminal>(reinterpret_cast<void*>(0xB8000));
 }
 
 }
