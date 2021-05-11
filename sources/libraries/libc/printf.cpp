@@ -265,7 +265,6 @@ flag_parse_out:
             } break;
             case 'X':
                 uppercase = true;
-                __attribute__ ((fallthrough));
             case 'x': {
                 unsigned int num = va_arg(args, unsigned int);
                 len = numlen(num, 16);

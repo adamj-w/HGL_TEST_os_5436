@@ -29,11 +29,11 @@ CDEFINES=-D__BUILD_TARGET__=\""$(BUILD_TARGET)"\" \
 
 CWARNINGS= -Wall -Wextra -Werror
 
-COMMON_CXX=clang++
-COMMON_CC=clang
-COMMON_LD=ld
-COMMON_AS=nasm
-COMMON_AR=ar
+COMMON_CXX?=clang++
+COMMON_CC?=clang
+COMMON_LD?=ld
+COMMON_AS?=nasm
+COMMON_AR?=ar
 
 COMMON_CXXFLAGS=--target=i686-pc-none-elf -march=i686 -std=c++17 -MD -O3 $(CWARNINGS) $(CINCLUDES) $(CDEFINES) -fsanitize=undefined -fno-rtti -fno-exceptions
 COMMON_CFLAGS  =--target=i686-pc-none-elf -march=i686 -std=c11 -MD -O3 $(CWARNINGS) $(CINCLUDES) $(CDEFINES) -fsanitize=undefined
@@ -44,6 +44,8 @@ COMMON_ARFLAGS=
 KERNEL_CXXFLAGS=-ffreestanding -fno-stack-protector -nostdlib -nostdinc++ -g
 KERNEL_LDFLAGS=-m elf_i386 -T $(ARCH_DIRECTORY)/system.ld
 KERNEL_ASFLAGS=-f elf32
+
+USER_CXXFLAGS=-ffreestanding -fno-stack-protector -nostdlib -nostdinc++ -g
 
 LIBRARIES=libruntime \
 		  libsystem \
@@ -116,7 +118,7 @@ $(SYSTEM_IMAGE): $(KERNEL_BINARY) $(LIBRARIES_ARCHIVES) grub.cfg
 $(BUILD_DIRECTORY)/%.cpp.o: $(SOURCES_DIRECTORY)/%.cpp
 	$(DIRECTORY_GUARD)
 	@echo "[CC] $@"
-	@$(COMMON_CXX) $(COMMON_CXXFLAGS) -c -o $@ $<
+	@$(COMMON_CXX) $(COMMON_CXXFLAGS) $(USER_CXXFLAGS) -c -o $@ $<
 
 # --------------------------------------------------------------
 
