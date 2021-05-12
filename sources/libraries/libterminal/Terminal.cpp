@@ -31,28 +31,28 @@ void Terminal::set_cursor(int x, int y)
 void Terminal::move_cursor(int dx, int dy)
 {
     int new_x = _cursor.x() + dx;
-    //int new_y = _cursor.y() + dy;
+    int new_y = _cursor.y() + dy;
     if (new_x < 0 || new_x >= _w)
     {
         _cursor = Cursor(new_x % _w, _cursor.y());
         move_cursor(0, dy + (new_x / _w));
     }
-    else if (_cursor.y() + dy < 0)
+    else if (new_y < 0)
     {
-        scroll(_cursor.y() + dy);
+        scroll(new_y);
         _cursor = Cursor(_cursor.x(), 0);
         move_cursor(dx, 0);
     }
-    else if (_cursor.y() + dy >= _h)
+    else if (new_y >= _h)
     {
-        scroll((_cursor.y() + dy) - (_h - 1));
+        scroll((new_y) - (_h - 1));
         _cursor = Cursor(_cursor.x(), _h - 1);
         move_cursor(dx, 0);
     }
     else
     {
-        _cursor = Cursor(_cursor.x() + dx,
-                         _cursor.y() + dy);
+        _cursor = Cursor(new_x,
+                         new_y);
 
         on_cursor_moved(_cursor);
     }

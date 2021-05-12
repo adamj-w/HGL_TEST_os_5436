@@ -61,12 +61,12 @@ CGAColor terminal_color_to_cga(hegel::term::Color color)
     }
 }
 
-void CGATerminal::clear_memory()
+/*void CGATerminal::clear_memory()
 {
     for(int i = 0; i < _w * _h; ++i) {
         _vga_cells[i].clear();
     }
-}
+}*/
 
 void CGATerminal::enable_cursor()
 {
@@ -93,7 +93,7 @@ void CGATerminal::on_cursor_moved(hegel::term::Cursor cursor)
 {
     uint16_t pos = cursor.y() * _w + cursor.x();
 
-    out8(0x3DA, 0x0F);
+    out8(0x3D4, 0x0F);
     out8(0x3D5, (uint8_t)(pos & 0xFF));
     out8(0x3D4, 0x0E);
     out8(0x3D5, (uint8_t)((pos >> 8) & 0xFF));

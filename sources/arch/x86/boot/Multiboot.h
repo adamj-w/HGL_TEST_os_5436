@@ -1,5 +1,6 @@
 #pragma once
 
+#include <libruntime/Callback.h>
 #include <libruntime/Iteration.h>
 #include <libsystem/Formattable.h>
 #include <system/memory/MemoryRegion.h>
@@ -30,6 +31,22 @@ public:
     {
         return memory::MemoryRegion::from_non_aligned_address(_addr, _size);
     }
+
+    ErrorOr<size_t> format(Stream& stream, FormatInfo& info)
+    {
+        __unused(info);
+
+        const char* multiboot_memory_type_name[] = {
+            "INVALID",
+            "AVAILABLE",
+            "RESERVED",
+            "ACPI_RECLAIMABLE",
+            "NVS",
+            "BADRAM",
+        };
+
+        return hegel::format(stream, "MemoryMapEntry({}, {})", region(), multiboot_memory_type_name[_type]);
+    } 
 };
 
 class Multiboot
@@ -53,8 +70,7 @@ public:
 
     bool is_valid() { return _magic == MULTIBOOT2_BOOTLOADER_MAGIC; }
 
-    template<typename Callback>
-    void for_each_tag(Callback c)
+    void for_each_tag(Callback<Iteration(multiboot_tag*)> c)
     {
         multiboot_tag* cur = reinterpret_cast<multiboot_tag*>(_addr);
 
@@ -94,17 +110,16 @@ public:
         }
     }
 
-    template<typename Callback>
-    void with_memory_map(Callback callback)
+    void with_memory_map(Callback<Iteration(MemoryMapEntry)> callback)
     {
         auto* tag = find_tag<multiboot_tag_mmap>(MULTIBOOT_TAG_TYPE_MMAP);
 
         if(tag) {
             for(multiboot_memory_map_t* mmap = tag->entries; 
                 (uint8_t*)mmap < (uint8_t*)tag + tag->size; 
-                mmap = (multiboot_memory_map_t*)(mmap + tag->entry_size))
+                mmap = (multiboot_memory_map_t*)((uintptr_t)mmap + tag->entry_size))
             {
-                if(callback(MemoryMapEntry((uintptr_t)mmap, mmap->len, mmap->type)) == Iteration::STOP) {
+                if(callback(MemoryMapEntry((uintptr_t)mmap->addr, mmap->len, mmap->type)) == Iteration::STOP) {
                     return;
                 }
             }

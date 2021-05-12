@@ -50,15 +50,21 @@ private:
 public:
     CGATerminal(void* addr) 
         : hegel::term::Terminal(80, 25)
-        , _vga_cells(reinterpret_cast<CGACell*>(addr)) 
+        , _vga_cells(reinterpret_cast<CGACell*>(addr))
     {
-        clear_memory();
+        _default_attribs = term::Attributes(false, term::Color::BLACK, term::Color::BRIGHT_GREY);
+        _current_attribs = _default_attribs;
+
+        for(int i = 0; i < _w * _h; i++) {
+            on_cell_updated(i % _w, i / _w, term::Cell(_default_attribs, U' '));
+        }
+
         enable_cursor();
+        on_cursor_moved(term::Cursor(0, 0));
     }
 
     ~CGATerminal() {}
 
-    void clear_memory();
     void enable_cursor();
     void disable_cursor();
 

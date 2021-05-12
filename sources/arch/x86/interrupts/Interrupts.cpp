@@ -17,7 +17,7 @@ void interrupts_initialize()
 {
     logger_info("Initializing system interrupts.");
 
-    pic_remap();
+    pic_remap(0x20, 0x28);
 
     for(size_t i = 0; i < 32; i++) {
         idt_entries[i] = IDTEntry::create(__interrupt_vector[i], 0x08, IDT_INTGATE);
@@ -28,6 +28,9 @@ void interrupts_initialize()
     }
 
     idt_entries[128] = IDTEntry::create(__interrupt_vector[48], 0x08, IDT_TRAPGATE);
+
+    idt_descriptor.offset = (uintptr_t)&idt_entries[0];
+    idt_descriptor.size = sizeof(IDTEntry) * IDT_ENTRY_COUNT;
 
     logger_info("Loading the IDT.");
     x86::load_idt((uint32_t)&idt_descriptor);

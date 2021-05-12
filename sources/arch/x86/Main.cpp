@@ -4,8 +4,9 @@
 #include "segmentation/Segmentation.h"
 #include "interrupts/Interrupts.h"
 
-#include <system/memory/Memory.h>
 #include <system/System.h>
+#include <system/memory/Memory.h>
+#include <system/scheduling/Scheduling.h>
 
 #include <libsystem/Stdio.h>
 #include <libsystem/Logger.h>
@@ -43,9 +44,9 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
         logger_info("Found valid bootloader with name \"{}\"", multiboot.bootloader());
     }
 
-    multiboot.with_memory_map([&](MemoryMapEntry entry) -> Iteration {
+    multiboot.with_memory_map([&](MemoryMapEntry entry) {
         if(entry.is_avail()) {
-            logger_info("Marking {} as free usable memory by the kernel.", entry);
+            logger_info("Marking {} as usable memory.", entry);
             memory::free_region(entry.region());
         } else if(entry.is_bad()) {
             logger_warn("Badram at {}, skipping", entry.region());
@@ -63,7 +64,16 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
     segmentation_initialize();
     interrupts_initialize();
 
-    hegel::stdout = make<CGATerminal>(reinterpret_cast<void*>(0xB8000));
+    auto cga_term = make<CGATerminal>(reinterpret_cast<void*>(0xB8000));
+    //cga_term->disable_cursor();
+    stdout = cga_term;
+
+    scheduling::initialize();
+
+    print("\e[31mHegelOS\e[m (C) 2020 by Adam Warren ({} {})\n", __BUILD_TARGET__, __BUILD_GITREF__);
+    print("Codename: \e[31mMarshmallow\e[m built on (\"{}\")\n", __BUILD_UNAME__);
+    print("================================================================================\n");
+    print("~ \e[94mh\e[m ");
 }
 
 }
