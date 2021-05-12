@@ -1,7 +1,12 @@
 #pragma once
 
 #include <libruntime/RefPtr.h>
-#include <system/tasking/Thread.h>
+
+namespace hegel::tasking {
+class Thread;
+class Process;
+enum class ThreadState;
+}
 
 namespace hegel::scheduling {
 

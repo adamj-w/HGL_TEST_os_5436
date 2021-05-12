@@ -44,7 +44,7 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
         logger_info("Found valid bootloader with name \"{}\"", multiboot.bootloader());
     }
 
-    multiboot.with_memory_map([&](MemoryMapEntry entry) {
+    multiboot.with_memory_map([&](MemoryMapEntry entry) -> Iteration {
         if(entry.is_avail()) {
             logger_info("Marking {} as usable memory.", entry);
             memory::free_region(entry.region());

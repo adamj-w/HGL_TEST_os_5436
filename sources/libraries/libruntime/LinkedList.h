@@ -1,7 +1,7 @@
 #pragma once
 
 #include <libruntime/Iteration.h>
-#include <libruntime/Callback.h>
+//#include <libruntime/Callback.h>
 #include <libruntime/Move.h>
 #include <libruntime/Types.h>
 #include <libruntime/Assert.h>
@@ -13,7 +13,8 @@ struct LinkedListItem
 {
     T value;
 
-    LinkedListItem* prev, next;
+    LinkedListItem* prev;
+    LinkedListItem* next;
 
     LinkedListItem(T value) : value(value), prev(nullptr), next(nullptr) {}
 };
@@ -58,7 +59,8 @@ public:
         _tail = nullptr;
     }
 
-    void foreach(Callback<Iteration(T)> callback)
+    template<typename Callback>
+    void foreach(Callback callback)
     {
         LinkedListItem<T>* current = _head;
 
@@ -207,7 +209,7 @@ public:
         return ret;
     }
 
-    T remove(T& value)
+    void remove(T& value)
     {
         LinkedListItem<T>* cur = _head;
 
@@ -237,7 +239,7 @@ public:
         }
     }
 
-    T remove_all(T& value)
+    void remove_all(T& value)
     {
         LinkedListItem<T>* cur = _head;
 

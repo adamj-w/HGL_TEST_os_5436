@@ -6,7 +6,7 @@
 #include <libsystem/Formattable.h>
 
 #include <system/tasking/Stack.h>
-#include <system/scheduling/Process.h>
+#include <system/tasking/Process.h>
 #include <system/scheduling/Blocker.h>
 #include <system/scheduling/Policy.h>
 
@@ -76,7 +76,7 @@ public:
     static RefPtr<Thread> by_id(int id);
 
     static void cleanup(RefPtr<Thread> thread);
-    static void foreach(Callback<Iteration(RefPtr<Thread>)> callback);
+    static void foreach(Iteration (*callback)(RefPtr<Thread>));
 
     ErrorOr<size_t> format(Stream& stream, FormatInfo& info);
 };

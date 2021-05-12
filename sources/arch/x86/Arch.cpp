@@ -1,6 +1,10 @@
 #include "arch/Arch.h"
 #include "x86.h"
 
+#include "tasking/x86Thread.h"
+#include <system/tasking/Thread.h>
+#include <system/tasking/Process.h>
+
 using namespace hegel::memory;
 
 extern int __kernel_start;
@@ -46,6 +50,11 @@ memory::MemoryRegion get_kernel_region()
     size_t size = &__kernel_end - &__kernel_start;
 
     return MemoryRegion::create_around_non_aligned_address(addr, size);
+}
+
+RefPtr<tasking::Thread> create_thread(RefPtr<tasking::Process> process, tasking::ThreadEntry entry)
+{
+    return make<x86::x86Thread>(process, entry);
 }
 
 }

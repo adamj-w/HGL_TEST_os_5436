@@ -3,6 +3,8 @@
 #include "../x86.h"
 
 #include <libsystem/Logger.h>
+#include <system/scheduling/Scheduling.h>
+#include <system/System.h>
 
 #include "arch/Arch.h"
 
@@ -44,9 +46,13 @@ extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFr
         logger_fatal("CPU exception: {} error={}", stackFrame.intno, stackFrame.err);
     }
 
-    // TODO: int number 32 ticks the scheduler
+    if(stackFrame.intno == 32) {
+        hegel::tick();
 
-    logger_info("Executing intno: {}", stackFrame.intno);
+        esp = hegel::scheduling::schedule(esp);
+    }
+
+    //logger_info("Executing intno: {}", stackFrame.intno);
 
     pic_ack(stackFrame.intno);
 

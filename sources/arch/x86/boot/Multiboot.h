@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libruntime/Callback.h>
+//#include <libruntime/Callback.h>
 #include <libruntime/Iteration.h>
 #include <libsystem/Formattable.h>
 #include <system/memory/MemoryRegion.h>
@@ -70,7 +70,8 @@ public:
 
     bool is_valid() { return _magic == MULTIBOOT2_BOOTLOADER_MAGIC; }
 
-    void for_each_tag(Callback<Iteration(multiboot_tag*)> c)
+    template<typename Callback>
+    void for_each_tag(Callback c)
     {
         multiboot_tag* cur = reinterpret_cast<multiboot_tag*>(_addr);
 
@@ -110,7 +111,8 @@ public:
         }
     }
 
-    void with_memory_map(Callback<Iteration(MemoryMapEntry)> callback)
+    template<typename Callback>
+    void with_memory_map(Callback callback)
     {
         auto* tag = find_tag<multiboot_tag_mmap>(MULTIBOOT_TAG_TYPE_MMAP);
 

@@ -113,8 +113,8 @@ public:
 
     bool operator==(RefPtr<T> other) const { return _ptr == other._ptr; }
     bool operator!=(RefPtr<T> other) const { return _ptr != other._ptr; }
-    bool operator==(T* other) const { return _ptr == other->_ptr; }
-    bool operator!=(T* other) const { return _ptr != other->_ptr; }
+    bool operator==(T* other) const { return _ptr == other; }
+    bool operator!=(T* other) const { return _ptr != other; }
 
     operator bool() const
     {
