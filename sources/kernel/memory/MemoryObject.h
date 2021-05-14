@@ -2,7 +2,7 @@
 
 #include <libruntime/RefCounted.h>
 
-#include <system/memory/MemoryRegion.h>
+#include <kernel/memory/MemoryRegion.h>
 
 namespace hegel::memory {
 

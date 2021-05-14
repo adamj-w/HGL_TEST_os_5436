@@ -3,7 +3,7 @@
 #include <libruntime/LinkedList.h>
 #include <libruntime/RefPtr.h>
 
-#include <system/memory/MemoryObject.h>
+#include <kernel/memory/MemoryObject.h>
 
 namespace hegel::memory {
 

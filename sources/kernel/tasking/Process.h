@@ -4,8 +4,8 @@
 #include <libruntime/RefCounted.h>
 #include <libruntime/OwnPtr.h>
 
-#include <system/memory/AddressSpace.h>
-#include <system/tasking/Promotion.h>
+#include <kernel/memory/AddressSpace.h>
+#include <kernel/tasking/Promotion.h>
 
 namespace hegel::tasking {
 

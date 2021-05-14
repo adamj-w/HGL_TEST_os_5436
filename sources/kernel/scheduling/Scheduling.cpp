@@ -6,7 +6,7 @@
 
 #include <libsystem/__plugs__.h>
 
-#include <system/tasking/Thread.h>
+#include <kernel/tasking/Thread.h>
 
 using namespace hegel::tasking;
 

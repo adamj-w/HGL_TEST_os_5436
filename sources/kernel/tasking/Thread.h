@@ -5,10 +5,10 @@
 #include <libruntime/OwnPtr.h>
 #include <libsystem/Formattable.h>
 
-#include <system/tasking/Stack.h>
-#include <system/tasking/Process.h>
-#include <system/scheduling/Blocker.h>
-#include <system/scheduling/Policy.h>
+#include <kernel/tasking/Stack.h>
+#include <kernel/tasking/Process.h>
+#include <kernel/scheduling/Blocker.h>
+#include <kernel/scheduling/Policy.h>
 
 namespace hegel::tasking {
 

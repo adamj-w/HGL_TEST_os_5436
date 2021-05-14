@@ -3,8 +3,8 @@
 #include "../x86.h"
 
 #include <libsystem/Logger.h>
-#include <system/scheduling/Scheduling.h>
-#include <system/System.h>
+#include <kernel/scheduling/Scheduling.h>
+#include <kernel/System.h>
 
 #include "arch/Arch.h"
 

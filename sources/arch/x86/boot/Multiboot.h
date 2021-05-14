@@ -3,7 +3,7 @@
 //#include <libruntime/Callback.h>
 #include <libruntime/Iteration.h>
 #include <libsystem/Formattable.h>
-#include <system/memory/MemoryRegion.h>
+#include <kernel/memory/MemoryRegion.h>
 
 #include <thirdparty/multboot2.h>
 
@@ -47,6 +47,15 @@ public:
 
         return hegel::format(stream, "MemoryMapEntry({}, {})", region(), multiboot_memory_type_name[_type]);
     } 
+};
+
+struct Framebuffer
+{
+    uintptr_t address;
+    size_t width;
+    size_t height;
+    size_t pitch; // bytes per row
+    size_t depth; // bits per pixel
 };
 
 class Multiboot
@@ -134,6 +143,23 @@ public:
 
         if(tag) {
             return &tag->rsdp[0];
+        } else {
+            return nullptr;
+        }
+    }
+
+    Framebuffer* get_framebuffer()
+    {
+        auto* tag = find_tag<multiboot_tag_framebuffer>(MULTIBOOT_TAG_TYPE_FRAMEBUFFER);
+
+        if(tag) {
+            Framebuffer* fb = new Framebuffer;
+            fb->address = tag->common.framebuffer_addr;
+            fb->width = tag->common.framebuffer_width;
+            fb->height = tag->common.framebuffer_height;
+            fb->depth = tag->common.framebuffer_bpp;
+            fb->pitch = tag->common.framebuffer_pitch;
+            return fb;
         } else {
             return nullptr;
         }

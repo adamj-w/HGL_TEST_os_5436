@@ -4,7 +4,7 @@
 #include <libruntime/RefPtr.h>
 #include <libruntime/Types.h>
 
-#include <system/memory/MemoryRegion.h>
+#include <kernel/memory/MemoryRegion.h>
 
 namespace hegel::tasking {
 class Thread;
@@ -21,6 +21,8 @@ void idle() __noreturn;
 void halt();
 
 void yield();
+
+void shutdown();
 
 size_t get_page_size();
 

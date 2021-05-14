@@ -1,7 +1,7 @@
-#include <system/tasking/Thread.h>
-#include <system/scheduling/Scheduling.h>
-#include <system/scheduling/BlockerSleep.h>
-#include <system/scheduling/BlockerJoin.h>
+#include <kernel/tasking/Thread.h>
+#include <kernel/scheduling/Scheduling.h>
+#include <kernel/scheduling/BlockerSleep.h>
+#include <kernel/scheduling/BlockerJoin.h>
 
 #include <libruntime/SpinLock.h>
 #include <libsystem/Logger.h>

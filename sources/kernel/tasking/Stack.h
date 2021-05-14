@@ -1,7 +1,7 @@
 #pragma once
 
 #include <libruntime/Types.h>
-#include <system/memory/Memory.h>
+#include <kernel/memory/Memory.h>
 
 #include <libc/string.h>
 

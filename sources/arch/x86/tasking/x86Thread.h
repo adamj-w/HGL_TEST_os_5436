@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../interrupts/Interrupts.h"
-#include <system/tasking/Process.h>
-#include <system/tasking/Thread.h>
+#include <kernel/tasking/Process.h>
+#include <kernel/tasking/Thread.h>
 
 namespace hegel::arch::x86 {
 

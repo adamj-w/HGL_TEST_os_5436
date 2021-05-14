@@ -55,7 +55,7 @@ LIBRARIES=libruntime \
 LIBRARIES_DIRECTORY=$(SOURCES_DIRECTORY)/libraries
 
 LIBRARIES_SOURCES=$(shell find $(LIBRARIES_DIRECTORY) -name "*.cpp") \
-				  $(wildcard $(SOURCES_DIRECTORY)/targets/$(BUILD_SYSTEM)/*.cpp) \
+				  #$(wildcard $(SOURCES_DIRECTORY)/targets/$(BUILD_SYSTEM)/*.cpp) \
 				  $(wildcard $(SOURCES_DIRECTORY)/targets/$(BUILD_SYSTEM)/$(BUILD_ARCH)/*.cpp) \
 				  $(wildcard $(SOURCES_DIRECTORY)/targets/$(BUILD_SYSTEM)/$(BUILD_ARCH)/*.s)
 
@@ -63,15 +63,15 @@ LIBRARIES_OBJECTS=$(patsubst $(SOURCES_DIRECTORY)/%, $(BUILD_DIRECTORY)/%.o, $(L
 LIBRARIES_ARCHIVES=$(patsubst %, $(BUILD_DIRECTORY)/libraries/%.a, $(LIBRARIES))
 
 ARCH_DIRECTORY=$(SOURCES_DIRECTORY)/arch/$(BUILD_ARCH)
-SYSTEM_DIRECTORY=$(SOURCES_DIRECTORY)/system
+KERNEL_DIRECTORY=$(SOURCES_DIRECTORY)/kernel
 TARGET_DIRECTORY=$(SOURCES_DIRECTORY)/targets
 
 KERNEL_SOURCES=$(wildcard $(ARCH_DIRECTORY)/*.s) \
 			   $(wildcard $(ARCH_DIRECTORY)/**/*.s) \
 			   $(wildcard $(ARCH_DIRECTORY)/*.cpp) \
 			   $(wildcard $(ARCH_DIRECTORY)/**/*.cpp) \
-			   $(wildcard $(SYSTEM_DIRECTORY)/*.cpp) \
-			   $(wildcard $(SYSTEM_DIRECTORY)/**/*.cpp) \
+			   $(wildcard $(KERNEL_DIRECTORY)/*.cpp) \
+			   $(wildcard $(KERNEL_DIRECTORY)/**/*.cpp) \
 			   $(wildcard $(LIBRARIES_DIRECTORY)/libc/*.cpp) \
 			   $(wildcard $(LIBRARIES_DIRECTORY)/libruntime/*.cpp) \
 			   $(wildcard $(LIBRARIES_DIRECTORY)/libsystem/*.cpp) \

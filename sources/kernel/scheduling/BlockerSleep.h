@@ -1,7 +1,7 @@
 #pragma once
 
-#include <system/System.h>
-#include <system/scheduling/Blocker.h>
+#include <kernel/System.h>
+#include <kernel/scheduling/Blocker.h>
 #include <libruntime/Types.h>
 
 namespace hegel::scheduling {

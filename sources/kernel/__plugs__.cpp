@@ -3,8 +3,8 @@
 #include <libruntime/SpinLock.h>
 
 #include "arch/Arch.h"
-#include "system/System.h"
-#include "system/memory/Memory.h"
+#include "System.h"
+#include "memory/Memory.h"
 
 namespace hegel::plugs {
 

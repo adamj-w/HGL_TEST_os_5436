@@ -2,10 +2,11 @@
 #include "x86.h"
 
 #include "tasking/x86Thread.h"
-#include <system/tasking/Thread.h>
-#include <system/tasking/Process.h>
+#include <kernel/tasking/Thread.h>
+#include <kernel/tasking/Process.h>
 
 using namespace hegel::memory;
+using namespace hegel::arch::x86;
 
 extern int __kernel_start;
 extern int __kernel_end;
@@ -37,6 +38,19 @@ void halt()
 void yield()
 {
     x86::raise_irq1();
+}
+
+void shutdown()
+{
+    // Bochs, and older versions of QEMU(than 2.0)
+    out16(0xB004, 0x2000);
+
+    // Newer versions of QEMU
+    out16(0x604, 0x2000);
+
+    // Virtualbox
+    out16(0x4004, 0x3400);
+    arch::halt();
 }
 
 size_t get_page_size()
