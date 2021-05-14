@@ -7,6 +7,7 @@
 #include <system/System.h>
 #include <system/memory/Memory.h>
 #include <system/scheduling/Scheduling.h>
+#include <system/tasking/Tasking.h>
 
 #include <libsystem/Stdio.h>
 #include <libsystem/Logger.h>
@@ -69,6 +70,7 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
     stdout = cga_term;
 
     scheduling::initialize();
+    tasking::initialize();
 
     print("\e[31mHegelOS\e[m (C) 2020 by Adam Warren ({} {})\n", __BUILD_TARGET__, __BUILD_GITREF__);
     print("Codename: \e[31mMarshmallow\e[m built on (\"{}\")\n", __BUILD_UNAME__);

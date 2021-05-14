@@ -9,11 +9,13 @@
 
 namespace hegel::tasking {
 
+#define PROCESS_NAME_MAXLEN 256
+
 class Process final : public Formattable, public RefCounted<Process>
 {
 private:
     int _id;
-    char _name[256];
+    char _name[PROCESS_NAME_MAXLEN];
     Promotion _promo = Promotion::SUPERVISOR;
 
     OwnPtr<memory::AddressSpace> _address_space;

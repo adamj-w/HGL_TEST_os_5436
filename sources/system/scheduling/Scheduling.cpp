@@ -32,7 +32,7 @@ void update_thread_state(RefPtr<Thread> thread, ThreadState state)
 
     if(thread->state() == ThreadState::EMBRYO) {
         if(_running_thread == nullptr) {
-            logger_info("Using {} as running thread", thread);
+            logger_info("Using {} as running thread", &*thread);
             _running_thread = thread;
         }
     } else if(thread->state() == ThreadState::BLOCKED) {
