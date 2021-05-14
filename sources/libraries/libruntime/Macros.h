@@ -24,6 +24,8 @@
 
 #define __noreturn __attribute__((noreturn));
 
+#define __unchecked_all __attribute__((no_sanitize("address", "thread", "memory", "dataflow", "cfi", "safe-stack", "undefined")))
+
 #define __str(s) #s
 
 #define __noncopyable(__class_name) \

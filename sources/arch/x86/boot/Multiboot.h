@@ -127,6 +127,17 @@ public:
             }
         }
     }
+
+    void* get_ACPI_rsdp()
+    {
+        auto* tag = find_tag<multiboot_tag_old_acpi>(MULTIBOOT_TAG_TYPE_ACPI_OLD);
+
+        if(tag) {
+            return &tag->rsdp[0];
+        } else {
+            return nullptr;
+        }
+    }
 };
 
 }
