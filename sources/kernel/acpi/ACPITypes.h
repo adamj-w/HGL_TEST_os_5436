@@ -13,7 +13,7 @@ struct __packed RSDPDescriptor
     uint8_t Revision;
     uint32_t RsdtAddress;
 
-    bool validate() __unchecked_all
+    bool validate() const __unchecked_all
     {
         uint8_t sum = 0;
         char* bytes = (char*)this;

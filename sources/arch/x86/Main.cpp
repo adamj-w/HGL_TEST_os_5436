@@ -1,10 +1,11 @@
 #include "device/SerialStream.h"
 #include "device/CGATerminal.h"
-#include "boot/Multiboot.h"
 #include "segmentation/Segmentation.h"
 #include "interrupts/Interrupts.h"
 
 #include <kernel/System.h>
+#include <kernel/bootdata/Multiboot2.h>
+#include <kernel/bootdata/Bootdata.h>
 #include <kernel/memory/Memory.h>
 #include <kernel/scheduling/Scheduling.h>
 #include <kernel/tasking/Tasking.h>
@@ -60,7 +61,7 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
     logger_info("Hegel Kernel ({} {})", __BUILD_TARGET__, __BUILD_GITREF__);
     logger_info("Kernel built on \"{}\"", __BUILD_UNAME__);
 
-    auto multiboot = x86::Multiboot(multiboot_addr, multiboot_magic);
+    auto multiboot = boot::Multiboot(multiboot_addr, multiboot_magic);
 
     if(!multiboot.is_valid()) {
         logger_fatal("Invalid bootloader, please boot with multiboot2 specification");
@@ -69,7 +70,9 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
         logger_info("Found valid bootloader with name \"{}\"", multiboot.bootloader());
     }
 
-    multiboot.with_memory_map([&](MemoryMapEntry entry) -> Iteration {
+    auto* bootdata = multiboot.get_bootdata();
+
+    multiboot.with_memory_map([&](boot::MemoryMapEntry entry) -> Iteration {
         if(entry.is_avail()) {
             logger_info("Marking {} as usable memory.", entry);
             memory::free_region(entry.region());
@@ -102,10 +105,11 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
         acpi::initialize(rsdp);
     }
 
-    auto framebuffer = multiboot.get_framebuffer();
+    /*auto framebuffer = multiboot.get_framebuffer();
     if(framebuffer == nullptr) {
         logger_fatal("This os requires a framebuffer");
     }
+    graphics::initialize(framebuffer);*/
 
     auto task_a = tasking::Thread::create(tasking::kernel_process(), reinterpret_cast<tasking::ThreadEntry>(taskA));
     task_a->start();
@@ -119,8 +123,6 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
 
     tasking::Thread::join(task_a);
     tasking::Thread::join(task_b);
-
-    stdlog->write("task has been joined\n", 21);
 
     arch::shutdown();
     

@@ -17,7 +17,7 @@ ErrorOr<size_t> format(Stream& stream, const char* string, FormatInfo& info)
     return stream.write(string, strlen(string));
 }
 
-ErrorOr<size_t> format(Stream& stream, void* ptr, FormatInfo& info)
+ErrorOr<size_t> format(Stream& stream, const void* ptr, FormatInfo& info)
 {
     return format(stream, reinterpret_cast<uintptr_t>(ptr), info);
 }

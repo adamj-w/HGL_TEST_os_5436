@@ -4,6 +4,6 @@
 
 namespace hegel::acpi {
 
-void initialize(void* rsdp);// __unchecked_all;
+void initialize(const void* rsdp);// __unchecked_all;
 
 }

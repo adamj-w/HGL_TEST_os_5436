@@ -78,7 +78,7 @@ ErrorOr<size_t> format(Stream& stream, const char* fmt, First first, Args... arg
 }
 
 ErrorOr<size_t> format(Stream& stream, const char* string, FormatInfo& info);
-ErrorOr<size_t> format(Stream& stream, void* value, FormatInfo& info);
+ErrorOr<size_t> format(Stream& stream, const void* value, FormatInfo& info);
 ErrorOr<size_t> format(Stream& stream, unsigned int value, FormatInfo& info);
 ErrorOr<size_t> format(Stream& stream, Formattable& value, FormatInfo& info);
 ErrorOr<size_t> format(Stream& stream, Formattable* value, FormatInfo& info);

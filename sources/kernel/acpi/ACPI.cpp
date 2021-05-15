@@ -8,16 +8,16 @@
 
 namespace hegel::acpi {
 
-static RSDPDescriptor* _rsdp_addr;
+static const RSDPDescriptor* _rsdp_addr;
 
-void initialize(void* rsdp)
+void initialize(const void* rsdp)
 {
-    if(!reinterpret_cast<RSDPDescriptor*>(rsdp)->validate()) {
+    if(!((const RSDPDescriptor*) rsdp)->validate()) {
         logger_error("Failed to validate RSDP at address {#x}!", rsdp);
         return;
     }
     
-    _rsdp_addr = reinterpret_cast<RSDPDescriptor*>(rsdp);
+    _rsdp_addr = (const RSDPDescriptor*) rsdp;
 
     logger_info("RSDP has OEM of {}", &_rsdp_addr->OEMID[0]);
 

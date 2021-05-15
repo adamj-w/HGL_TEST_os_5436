@@ -28,13 +28,13 @@ align 4
     dd MULTIBOOT2_HEADER_LENGTH
     dd MULTIBOOT2_CHECKSUM
 
-align 8
-    dw MULTIBOOT2_HEADER_TAG_FRAMEBUFFER
-    dw MULTIBOOT2_HEADER_TAG_OPTIONAL
-    dd 20
-    dd 0
-    dd 0
-    dd 32
+;align 8
+;    dw MULTIBOOT2_HEADER_TAG_FRAMEBUFFER
+;    dw MULTIBOOT2_HEADER_TAG_OPTIONAL
+;    dd 20
+;    dd 0
+;    dd 0
+;    dd 32
 
 align 8
     dw MULTIBOOT2_HEADER_TAG_END
@@ -56,9 +56,7 @@ _start:
     cld
 
     mov esp, stack_top
-    push 0
-    push 0
-    mov ebp, esp
+    xor ebp, ebp
     
     push ebx
     push eax
