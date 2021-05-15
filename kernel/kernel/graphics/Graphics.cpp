@@ -15,8 +15,8 @@ void initialize(const Framebuffer* fb) {
 
 void plot(size_t x, size_t y, uint32_t color)
 {
-    if ((x >= 0 && x <= _framebuffer.width) &&
-        (y >= 0 && y <= _framebuffer.height))
+    if ((x <= _framebuffer.width) &&
+        (y <= _framebuffer.height))
     {
         uint8_t *pixel = (reinterpret_cast<uint8_t *>(_framebuffer.address)) + (y * (_framebuffer.pitch)) + (x * _framebuffer.bpp);
 

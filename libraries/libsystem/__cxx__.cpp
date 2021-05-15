@@ -53,7 +53,20 @@ void operator delete(void* ptr)
     __alloc__::free(ptr);
 }
 
+void operator delete(void* ptr, unsigned long size)
+{
+    __unused(size);
+    __alloc__::free(ptr);
+}
+
 void operator delete[](void* ptr) 
 {
     __alloc__::free(ptr);
 }
+
+void operator delete[](void* ptr, unsigned long size)
+{
+    __unused(size);
+    __alloc__::free(ptr);
+}
+

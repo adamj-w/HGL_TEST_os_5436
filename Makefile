@@ -1,150 +1,135 @@
-BUILD_ARCH?=x86
-BUILD_CONFIG?=debug
-BUILD_SYSTEM?=hegel
+.SUFFIXES:
+.DEFAULT_GOAL := all
 
-BUILD_TARGET=$(BUILD_CONFIG)-$(BUILD_ARCH)-$(BUILD_SYSTEM)
-BUILD_GITREF=$(shell git rev-parse --abbrev-ref HEAD || echo unknown)/$(shell git rev-parse --short HEAD || echo unknown)
-BUILD_UNAME=$(shell uname -s -o -m -r)
-BUILD_DIRECTORY=build/$(BUILD_TARGET)
+export LC_ALL=C
+export ROOTDIR=.#$(shell pwd)
 
-IMAGE_DIRECTORY=$(BUILD_DIRECTORY)/image
-
-SOURCES_DIRECTORY=sources
-
-LOG=echo [$(BUILD_SYSTEM)] 
 DIRECTORY_GUARD=@mkdir -p $(@D)
 
-SYSTEM_IMAGE=$(BUILD_DIRECTORY)/image.iso
-SYSTEM_ROOT=$(BUILD_DIRECTORY)/root
+include make/defaults.mk
 
-QEMU?=qemu-system-i386
+BUILD_SYSTEM?=hegel
+BUILD_DISTRO?=$(BUILD_SYSTEM)-$(CONFIG_ARCH)-$(CONFIG_LOADER)
+BUILD_TARGET?=$(BUILD_SYSTEM)-$(CONFIG_ARCH)-$(CONFIG)
 
-CINCLUDES=-I. \
-		  -I$(SOURCES_DIRECTORY)/ \
-		  -I$(LIBRARIES_DIRECTORY)/
+BUILD_GITREF=$(shell git rev-parse --abbrev-ref HEAD || echo unknown)@$(shell git rev-parse --short HEAD || echo unknown)
+BUILD_UNAME=$(shell uname -s -o -m -r)
+DISKS_DIRECTORY=$(CONFIG_BUILD_DIRECTORY)/disks
 
-CDEFINES=-D__BUILD_TARGET__=\""$(BUILD_TARGET)"\" \
-		 -D__BUILD_GITREF__=\""$(BUILD_GITREF)"\" \
-		 -D__BUILD_UNAME__=\""$(BUILD_UNAME)"\"
+BUILDROOT=$(CONFIG_BUILD_DIRECTORY)/$(BUILD_TARGET)
+SYSROOT=$(BUILDROOT)/root
+BOOTROOT=$(DISKS_DIRECTORY)/$(BUILD_DISTRO)-$(CONFIG)
+BOOTDISK=$(DISKS_DIRECTORY)/$(BUILD_DISTRO)-$(CONFIG).img
+BOOTROOT_GZIP=$(BOOTDISK).gz
 
-CWARNINGS= -Wall -Wextra -Werror
+RAMDISK=$(BUILDROOT)/ramdisk.tar
 
-COMMON_CXX?=clang++
-COMMON_CC?=clang
-COMMON_LD?=ld
-COMMON_AS?=nasm
-COMMON_AR?=ar
+DISTRO_DIRECTORY=make/distro/
 
-COMMON_CXXFLAGS=--target=i686-pc-none-elf -march=i686 -std=c++17 -MD -O3 $(CWARNINGS) $(CINCLUDES) $(CDEFINES) -fsanitize=undefined -fno-rtti -fno-exceptions
-COMMON_CFLAGS  =--target=i686-pc-none-elf -march=i686 -std=c11 -MD -O3 $(CWARNINGS) $(CINCLUDES) $(CDEFINES) -fsanitize=undefined
-COMMON_LDFLAGS=
-COMMON_ASFLAGS=-f elf32
-COMMON_ARFLAGS=
+BUILD_DIRECTORY_LIBS=$(SYSROOT)/usr/lib
+BUILD_DIRECTORY_INCLUDE=$(SYSROOT)/usr/include
+BUILD_DIRECTORY_BINS=$(SYSROOT)/usr/bin
 
-KERNEL_CXXFLAGS=-ffreestanding -fno-stack-protector -nostdlib -nostdinc++ -g
-KERNEL_LDFLAGS=-m elf_i386 -T $(ARCH_DIRECTORY)/system.ld
-KERNEL_ASFLAGS=-f elf32
+include make/toolchains/$(CONFIG_ARCH)-$(CONFIG_TOOLCHAIN).mk
 
-USER_CXXFLAGS=-ffreestanding -fno-stack-protector -nostdlib -nostdinc++ -g
+BUILD_WARNING+= \
+	-Wall -Wextra -Werror
 
-LIBRARIES=libruntime \
-		  libsystem \
-		  libc \
-		  libterminal
+CXX_WARNINGS+= \
+	#-Wnon-virtual-dtor \
+	#-Woverloaded-virtual
 
-LIBRARIES_DIRECTORY=$(SOURCES_DIRECTORY)/libraries
+BUILD_INCLUDE+= \
+	-I. \
+	-Ikernel \
+	-Iuserspace \
+	-Ilibraries \
+	-Ilibraries/libc \
 
-LIBRARIES_SOURCES=$(shell find $(LIBRARIES_DIRECTORY) -name "*.cpp") \
-				  #$(wildcard $(SOURCES_DIRECTORY)/targets/$(BUILD_SYSTEM)/*.cpp) \
-				  $(wildcard $(SOURCES_DIRECTORY)/targets/$(BUILD_SYSTEM)/$(BUILD_ARCH)/*.cpp) \
-				  $(wildcard $(SOURCES_DIRECTORY)/targets/$(BUILD_SYSTEM)/$(BUILD_ARCH)/*.s)
+BUILD_DEFINES+= \
+	-D__BUILD_ARCH__=\""$(CONFIG_ARCH)"\" \
+	-D__BUILD_CONFIG__=\""$(CONFIG)"\" \
+	-D__BUILD_SYSTEM__=\""$(BUILD_SYSTEM)"\" \
+	-D__BUILD_TARGET__=\""$(BUILD_TARGET)"\" \
+	-D__BUILD_GITREF__=\""$(BUILD_GITREF)"\" \
+	-D__BUILD_UNAME__=\""$(BUILD_UNAME)"\" \
+	-D__BUILD_VERSION__=\""$(CONFIG_VERSION)"\"
 
-LIBRARIES_OBJECTS=$(patsubst $(SOURCES_DIRECTORY)/%, $(BUILD_DIRECTORY)/%.o, $(LIBRARIES_SOURCES))
-LIBRARIES_ARCHIVES=$(patsubst %, $(BUILD_DIRECTORY)/libraries/%.a, $(LIBRARIES))
+CFLAGS+= \
+	-std=c11 \
+	-MD \
+	--sysroot=$(SYSROOT) \
+	$(BUILD_WARNING) \
+	$(BUILD_INCLUDE) \
+	$(BUILD_DEFINES) \
+	$(BUILD_CONFIGS)
 
-ARCH_DIRECTORY=$(SOURCES_DIRECTORY)/arch/$(BUILD_ARCH)
-KERNEL_DIRECTORY=$(SOURCES_DIRECTORY)/kernel
-TARGET_DIRECTORY=$(SOURCES_DIRECTORY)/targets
+CXXFLAGS+= \
+	-std=c++17 \
+	-MD \
+	--sysroot=$(SYSROOT) \
+	$(BUILD_WARNING) \
+	$(CXX_WARNINGS) \
+	$(BUILD_INCLUDE) \
+	$(BUILD_DEFINES) \
+	$(BUILD_CONFIGS)
 
-KERNEL_SOURCES=$(wildcard $(ARCH_DIRECTORY)/*.s) \
-			   $(wildcard $(ARCH_DIRECTORY)/**/*.s) \
-			   $(wildcard $(ARCH_DIRECTORY)/*.cpp) \
-			   $(wildcard $(ARCH_DIRECTORY)/**/*.cpp) \
-			   $(wildcard $(KERNEL_DIRECTORY)/*.cpp) \
-			   $(wildcard $(KERNEL_DIRECTORY)/**/*.cpp) \
-			   $(wildcard $(LIBRARIES_DIRECTORY)/libc/*.cpp) \
-			   $(wildcard $(LIBRARIES_DIRECTORY)/libruntime/*.cpp) \
-			   $(wildcard $(LIBRARIES_DIRECTORY)/libsystem/*.cpp) \
-			   $(wildcard $(LIBRARIES_DIRECTORY)/libterminal/*.cpp)
+test2:
+	@echo "$(BUILD_DEFINES)"
 
-KERNEL_OBJECTS=$(patsubst $(SOURCES_DIRECTORY)/%, $(BUILD_DIRECTORY)/%.k.o, $(KERNEL_SOURCES))
+include kernel/arch/.build.mk
+include kernel/kernel/.build.mk
 
-KERNEL_BINARY=$(BUILD_DIRECTORY)/kernel.elf
+$(BOOTDISK): $(RAMDISK) $(KERNEL_BINARY) $(DISTRO_DIRECTORY)/grub.cfg
+	$(DIRECTORY_GUARD)
+	@echo [GRUB-MKRESCUE] $@
 
--include $(ARCH_DIRECTORY)/config.mk \
-		 $(TARGET_DIRECTORY)/$(BUILD_SYSTEM)/config.mk \
-		 $(TARGET_DIRECTORY)/$(BUILD_SYSTEM)/$(BUILD_ARCH)/config.mk
+	@mkdir -p $(BOOTROOT)/boot/grub
+	@cp $(DISTRO_DIRECTORY)/grub.cfg $(BOOTROOT)/boot/grub/
+	@cp $(RAMDISK) $(BOOTROOT)/boot/ramdisk.tar
+	@cp $(KERNEL_BINARY) $(BOOTROOT)/boot/kernel.bin
 
-# --------------------------------------------------------------
+	@grub-mkrescue -o $@ $(BOOTROOT) || \
+	grub2-mkrescue -o $@ $(BOOTROOT)
 
-.PHONY: all run run-headless clean dump debug
+#SYSROOT_CONTENT=$(shell find sysroot/ -type f)
 
-all: $(SYSTEM_IMAGE)
+$(RAMDISK): $(CRTS) $(HEADERS)
+	$(DIRECTORY_GUARD)
 
-run: $(SYSTEM_IMAGE)
-	$(QEMU) -serial mon:stdio -cdrom $(SYSTEM_IMAGE)
+	@echo [TAR] $@
 
-debug: $(SYSTEM_IMAGE)
-	$(QEMU) -serial mon:stdio -cdrom $(SYSTEM_IMAGE) -s -S
+	@mkdir -p \
+		$(SYSROOT)/bin \
+		$(SYSROOT)/sbin \
+		$(SYSROOT)/include \
+		$(SYSROOT)/lib \
+		$(SYSROOT)/usr/bin \
+		$(SYSROOT)/usr/lib \
+		$(SYSROOT)/usr/include \
+	
+	@cd $(SYSROOT); tar -cf $@ *
 
-run-headless: $(SYSTEM_IMAGE)
-	$(QEMU) -serial mon:stdio -cdrom $(SYSTEM_IMAGE) -nographic
+$(BOOTDISK_GZIP): $(BOOTDISK)
+	@gzip -c $(BOOTDISK) > $(BOOTDISK_GZIP)
 
+.PHONY: all
+all: $(BOOTDISK)
+
+.PHONY: run
+include make/vms/$(CONFIG_VMACHINE).mk
+
+.PHONY: sync
+sync:
+	rm $(BOOTDISK) $(RAMDISK)
+	make $(BOOTDISK)
+
+.PHONY: clean
 clean:
-	@echo "removing $(BUILD_DIRECTORY)"
-	rm -r $(BUILD_DIRECTORY)
+	rm -rf $(BUILDROOT)
 
-# --------------------------------------------------------------
+.PHONY: clean-all
+clean-all:
+	rm -rf $(CONFIG_BUILD_DIRECTORY)
 
-$(SYSTEM_IMAGE): $(KERNEL_BINARY) $(LIBRARIES_ARCHIVES) grub.cfg
-	@mkdir -p $(IMAGE_DIRECTORY)/boot/grub/
-	@cp grub.cfg $(IMAGE_DIRECTORY)/boot/grub/
-	@cp $(KERNEL_BINARY) $(IMAGE_DIRECTORY)/boot/
-	grub-mkrescue -o $(SYSTEM_IMAGE) $(IMAGE_DIRECTORY) || \
-	grub2-mkrescue -o $(SYSTEM_IMAGE) $(IMAGE_DIRECTORY)
-
-# --------------------------------------------------------------
-
-$(BUILD_DIRECTORY)/%.cpp.o: $(SOURCES_DIRECTORY)/%.cpp
-	$(DIRECTORY_GUARD)
-	@echo "[CC] $@"
-	@$(COMMON_CXX) $(COMMON_CXXFLAGS) $(USER_CXXFLAGS) -c -o $@ $<
-
-# --------------------------------------------------------------
-
-$(BUILD_DIRECTORY)/libraries/libc.a: $(filter $(BUILD_DIRECTORY)/libraries/libc/%.o, $(LIBRARIES_OBJECTS))
-$(BUILD_DIRECTORY)/libraries/libterminal.a: $(filter $(BUILD_DIRECTORY)/libraries/libterminal/%.o, $(LIBRARIES_OBJECTS))
-$(BUILD_DIRECTORY)/libraries/libruntime.a: $(filter $(BUILD_DIRECTORY)/libraries/libruntime/%.o, $(LIBRARIES_OBJECTS))
-$(BUILD_DIRECTORY)/libraries/libsystem.a: $(filter $(BUILD_DIRECTORY)/libraries/libsystem/%.o, $(LIBRARIES_OBJECTS)) \
-                                          $(filter $(BUILD_DIRECTORY)/targets/$(BUILD_SYSTEM)/%.o, $(LIBRARIES_OBJECTS)) \
-										  $(filter $(BUILD_DIRECTORY)/targets/$(BUILD_SYSTEM)/$(BUILD_ARCH)/%.o, $(LIBRARIES_OBJECTS))
-
-# --------------------------------------------------------------
-
-$(KERNEL_BINARY): $(KERNEL_OBJECTS)
-	$(DIRECTORY_GUARD)
-	@echo "[KERN][LD] $@"
-	@$(COMMON_LD) $(KERNEL_LDFLAGS) -o $@ $^
-
-$(BUILD_DIRECTORY)/%.cpp.k.o: $(SOURCES_DIRECTORY)/%.cpp
-	$(DIRECTORY_GUARD)
-	@echo "[KERN][CXX] $@"
-	@$(COMMON_CXX) $(COMMON_CXXFLAGS) $(KERNEL_CXXFLAGS) -c -o $@ $<
-
-$(BUILD_DIRECTORY)/%.s.k.o: $(SOURCES_DIRECTORY)/%.s
-	$(DIRECTORY_GUARD)
-	@echo "[KERN][AS] $@"
-	@$(COMMON_AS) $(KERNEL_ASFLAGS) -o $@ $<
-
--include $(KERNEL_OBJECTS:.o=.d)
--include $(LIBRARIES_OBJECTS:.o=.d)
+-include $(OBJECTS:.o=.d)

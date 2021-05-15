@@ -70,7 +70,7 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
         logger_info("Found valid bootloader with name \"{}\"", multiboot.bootloader());
     }
 
-    auto* bootdata = multiboot.get_bootdata();
+    //auto* bootdata = multiboot.get_bootdata();
 
     multiboot.with_memory_map([&](boot::MemoryMapEntry entry) -> Iteration {
         if(entry.is_avail()) {

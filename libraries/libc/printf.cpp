@@ -196,7 +196,6 @@ flag_parse_out:
                                 internal_fprintf_write(write, total, ret, func_data, "0", 1);
                             }
                         } else {
-                            if(num < 0 || flags & FLAGS_PLUS) padlen++;
                             for(uint32_t j = padlen; j < padding; j++) {
                                 internal_fprintf_write(write, total, ret, func_data, " ", 1);
                             }
@@ -265,6 +264,7 @@ flag_parse_out:
             } break;
             case 'X':
                 uppercase = true;
+                __fallthrough;
             case 'x': {
                 unsigned int num = va_arg(args, unsigned int);
                 len = numlen(num, 16);

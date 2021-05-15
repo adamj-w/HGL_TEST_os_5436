@@ -24,7 +24,17 @@
 
 #define __noreturn __attribute__((noreturn));
 
+#ifdef __LLVM__
 #define __unchecked_all __attribute__((no_sanitize("address", "thread", "memory", "dataflow", "cfi", "safe-stack", "undefined")))
+#else
+#define __unchecked_all
+#endif
+
+#ifdef __GNU__
+#define __fallthrough __attribute__((fallthrough))
+#else
+#define __fallthrough
+#endif
 
 #define __str(s) #s
 
