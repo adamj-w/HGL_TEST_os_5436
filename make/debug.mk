@@ -1,2 +1,0 @@
-CONFIG_IS_RELEASE?=false
-CONFIG_STRIP?=false

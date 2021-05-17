@@ -2,11 +2,10 @@
 .DEFAULT_GOAL := all
 
 export LC_ALL=C
-export ROOTDIR=.#$(shell pwd)
 
 DIRECTORY_GUARD=@mkdir -p $(@D)
 
-include make/defaults.mk
+include make/config/default.mk
 
 BUILD_SYSTEM?=hegel
 BUILD_DISTRO?=$(BUILD_SYSTEM)-$(CONFIG_ARCH)-$(CONFIG_LOADER)
@@ -17,36 +16,28 @@ BUILD_UNAME=$(shell uname -s -o -m -r)
 DISKS_DIRECTORY=$(CONFIG_BUILD_DIRECTORY)/disks
 
 BUILDROOT=$(CONFIG_BUILD_DIRECTORY)/$(BUILD_TARGET)
-SYSROOT=$(BUILDROOT)/root
+SYSROOT=$(BUILDROOT)/sysroot
 BOOTROOT=$(DISKS_DIRECTORY)/$(BUILD_DISTRO)-$(CONFIG)
 BOOTDISK=$(DISKS_DIRECTORY)/$(BUILD_DISTRO)-$(CONFIG).img
-BOOTROOT_GZIP=$(BOOTDISK).gz
+BOOTDISK_GZIP=$(BOOTDISK).gz
 
 RAMDISK=$(BUILDROOT)/ramdisk.tar
-
-DISTRO_DIRECTORY=make/distro/
 
 BUILD_DIRECTORY_LIBS=$(SYSROOT)/usr/lib
 BUILD_DIRECTORY_INCLUDE=$(SYSROOT)/usr/include
 BUILD_DIRECTORY_BINS=$(SYSROOT)/usr/bin
+BUILD_DIRECTORY_UTILITIES=$(SYSROOT)/bin
 
-include make/toolchains/$(CONFIG_ARCH)-$(CONFIG_TOOLCHAIN).mk
-
-BUILD_WARNING+= \
+BUILD_WARNING := \
 	-Wall -Wextra -Werror
 
-CXX_WARNINGS+= \
-	#-Wnon-virtual-dtor \
-	#-Woverloaded-virtual
+CXX_WARNINGS := 
 
-BUILD_INCLUDE+= \
+BUILD_INCLUDE := \
 	-I. \
-	-Ikernel \
-	-Iuserspace \
-	-Ilibraries \
-	-Ilibraries/libc \
+	-Iuserspace/libraries
 
-BUILD_DEFINES+= \
+BUILD_DEFINES := \
 	-D__BUILD_ARCH__=\""$(CONFIG_ARCH)"\" \
 	-D__BUILD_CONFIG__=\""$(CONFIG)"\" \
 	-D__BUILD_SYSTEM__=\""$(BUILD_SYSTEM)"\" \
@@ -55,62 +46,46 @@ BUILD_DEFINES+= \
 	-D__BUILD_UNAME__=\""$(BUILD_UNAME)"\" \
 	-D__BUILD_VERSION__=\""$(CONFIG_VERSION)"\"
 
-CFLAGS+= \
+CFLAGS= \
 	-std=c11 \
 	-MD \
-	$(TOOLCHAIN_FLAGS) \
+	--sysroot=$(SYSROOT) \
+	$(CONFIG_OPTIMIZATIONS) \
 	$(BUILD_WARNING) \
 	$(BUILD_INCLUDE) \
 	$(BUILD_DEFINES) \
-	$(BUILD_CONFIGS) \
-	#--sysroot=$(SYSROOT) 
+	$(BUILD_CONFIGS)
 
-CXXFLAGS+= \
+CXXFLAGS= \
 	-std=c++17 \
 	-MD \
-	$(TOOLCHAIN_FLAGS) \
+	--sysroot=$(SYSROOT) \
+	$(CONFIG_OPTIMIZATIONS) \
 	$(BUILD_WARNING) \
 	$(CXX_WARNINGS) \
 	$(BUILD_INCLUDE) \
 	$(BUILD_DEFINES) \
-	$(BUILD_CONFIGS) \
-	#--sysroot=$(SYSROOT) 
+	$(BUILD_CONFIGS)
 
-include kernel/arch/.build.mk
-include kernel/kernel/.build.mk
+include make/toolchain/$(CONFIG_ARCH)-$(CONFIG_TOOLCHAIN).mk
 
-include userspace/arch/.build.mk
-include libraries/.build.mk
-include userspace/.build.mk
+include kernel/.build.mk
 
-$(BOOTDISK): $(RAMDISK) $(KERNEL_BINARY) $(DISTRO_DIRECTORY)/grub.cfg
-	$(DIRECTORY_GUARD)
-	@echo [GRUB-MKRESCUE] $@
+include make/distro/.build.mk
 
-	@mkdir -p $(BOOTROOT)/boot/grub
-	@cp $(DISTRO_DIRECTORY)/grub.cfg $(BOOTROOT)/boot/grub/
-	@cp $(RAMDISK) $(BOOTROOT)/boot/ramdisk.tar
-	@cp $(KERNEL_BINARY) $(BOOTROOT)/boot/kernel.bin
-
-	@grub-mkrescue -o $@ $(BOOTROOT) || \
-	grub2-mkrescue -o $@ $(BOOTROOT)
-
-#SYSROOT_CONTENT=$(shell find sysroot/ -type f)
-
-$(RAMDISK): $(CRTS) $(HEADERS) $(TARGETS)
+$(RAMDISK): $(CRTS) $(TARGETS) $(HEADERS)
 	$(DIRECTORY_GUARD)
 
 	@echo [TAR] $@
 
 	@mkdir -p \
 		$(SYSROOT)/bin \
-		$(SYSROOT)/sbin \
-		$(SYSROOT)/include \
-		$(SYSROOT)/lib \
 		$(SYSROOT)/usr/bin \
 		$(SYSROOT)/usr/lib \
 		$(SYSROOT)/usr/include \
-	
+		$(SYSROOT)/lib \
+		$(SYSROOT)/home
+
 	@cd $(SYSROOT); tar -cf $@ *
 
 $(BOOTDISK_GZIP): $(BOOTDISK)
@@ -118,6 +93,9 @@ $(BOOTDISK_GZIP): $(BOOTDISK)
 
 .PHONY: all
 all: $(BOOTDISK)
+
+.PHONY: distro
+distro: $(BOOTDISK_GZIP)
 
 .PHONY: run
 include make/vms/$(CONFIG_VMACHINE).mk
@@ -135,4 +113,11 @@ clean:
 clean-all:
 	rm -rf $(CONFIG_BUILD_DIRECTORY)
 
+.PHONY: clean-fs
+clean-fs:
+	rm -rf $(SYSROOT)
+
 -include $(OBJECTS:.o=.d)
+
+test:
+	@echo "$(CXX) $(CXXFLAGS) -c -o test.o test.cpp"

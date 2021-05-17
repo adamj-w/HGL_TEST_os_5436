@@ -1,7 +1,5 @@
-CC:=i686-elf-gcc
-CXX:=i686-elf-g++
-BUILD_DEFINES += \
-	-D__GNU__
+CC:=clang -target i386-pc-none-gnu
+CXX:=clang++ -target i386-pc-none-gnu
 LD:=i686-elf-ld
 LDFLAGS:= \
 	--sysroot=$(SYSROOT)
