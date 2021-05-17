@@ -58,27 +58,30 @@ BUILD_DEFINES+= \
 CFLAGS+= \
 	-std=c11 \
 	-MD \
-	--sysroot=$(SYSROOT) \
+	$(TOOLCHAIN_FLAGS) \
 	$(BUILD_WARNING) \
 	$(BUILD_INCLUDE) \
 	$(BUILD_DEFINES) \
-	$(BUILD_CONFIGS)
+	$(BUILD_CONFIGS) \
+	#--sysroot=$(SYSROOT) 
 
 CXXFLAGS+= \
 	-std=c++17 \
 	-MD \
-	--sysroot=$(SYSROOT) \
+	$(TOOLCHAIN_FLAGS) \
 	$(BUILD_WARNING) \
 	$(CXX_WARNINGS) \
 	$(BUILD_INCLUDE) \
 	$(BUILD_DEFINES) \
-	$(BUILD_CONFIGS)
-
-test2:
-	@echo "$(BUILD_DEFINES)"
+	$(BUILD_CONFIGS) \
+	#--sysroot=$(SYSROOT) 
 
 include kernel/arch/.build.mk
 include kernel/kernel/.build.mk
+
+include userspace/arch/.build.mk
+include libraries/.build.mk
+include userspace/.build.mk
 
 $(BOOTDISK): $(RAMDISK) $(KERNEL_BINARY) $(DISTRO_DIRECTORY)/grub.cfg
 	$(DIRECTORY_GUARD)
@@ -94,7 +97,7 @@ $(BOOTDISK): $(RAMDISK) $(KERNEL_BINARY) $(DISTRO_DIRECTORY)/grub.cfg
 
 #SYSROOT_CONTENT=$(shell find sysroot/ -type f)
 
-$(RAMDISK): $(CRTS) $(HEADERS)
+$(RAMDISK): $(CRTS) $(HEADERS) $(TARGETS)
 	$(DIRECTORY_GUARD)
 
 	@echo [TAR] $@

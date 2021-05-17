@@ -1,0 +1,3 @@
+LIBS += RUNTIME
+
+RUNTIME_NAME = runtime
