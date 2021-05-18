@@ -14,7 +14,6 @@
 
 #include <libsystem/Stdio.h>
 #include <libsystem/Logger.h>
-#include <libsystem/__alloc__.h>
 
 #include <arch/Arch.h>
 

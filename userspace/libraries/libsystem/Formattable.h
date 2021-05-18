@@ -8,7 +8,7 @@ namespace hegel {
 class Formattable
 {
 public:
-    virtual ErrorOr<size_t> format(Stream& stream, FormatInfo& info)
+    virtual ErrorOrSizeT format(Stream& stream, FormatInfo& info)
     {
         __unused(info);
 

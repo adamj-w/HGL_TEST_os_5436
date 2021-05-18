@@ -29,7 +29,7 @@ public:
     Process(const char* name);
     ~Process();
 
-    ErrorOr<size_t> format(Stream& stream, FormatInfo& info);
+    ErrorOrSizeT format(Stream& stream, FormatInfo& info);
 
 };
 

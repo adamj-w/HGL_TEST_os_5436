@@ -38,7 +38,7 @@ struct MemoryMapEntry : public hegel::Formattable
         return memory::MemoryRegion::from_non_aligned_address(addr, size);
     }
 
-    ErrorOr<size_t> format(Stream& stream, FormatInfo& info)
+    ErrorOrSizeT format(Stream& stream, FormatInfo& info)
     {
         __unused(info);
 

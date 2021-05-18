@@ -78,7 +78,7 @@ public:
     static void cleanup(RefPtr<Thread> thread);
     static void foreach(Iteration (*callback)(RefPtr<Thread>));
 
-    ErrorOr<size_t> format(Stream& stream, FormatInfo& info);
+    ErrorOrSizeT format(Stream& stream, FormatInfo& info);
 };
 
 }

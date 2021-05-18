@@ -2,7 +2,7 @@
 #include <libc/stdio.h>
 #include <libruntime/Assert.h>
 #include <libsystem/Logger.h>
-#include <libsystem/__alloc__.h>
+#include <__alloc__.h>
 #include <libsystem/__plugs__.h>
 #include <libsystem/Stdio.h>
 

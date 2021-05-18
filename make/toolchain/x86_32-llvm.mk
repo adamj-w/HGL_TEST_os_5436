@@ -1,5 +1,5 @@
-CC:=clang -target i386-pc-none-gnu
-CXX:=clang++ -target i386-pc-none-gnu
+CC:=clang -target i386-pc-none-gnu -D__LLVM__
+CXX:=clang++ -target i386-pc-none-gnu -D__LLVM__
 LD:=i686-elf-ld
 LDFLAGS:= \
 	--sysroot=$(SYSROOT)

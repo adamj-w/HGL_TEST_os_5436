@@ -24,7 +24,7 @@ Process::Process(const char* str)
 
 Process::~Process() {}
 
-ErrorOr<size_t> Process::format(Stream& stream, FormatInfo& info)
+ErrorOrSizeT Process::format(Stream& stream, FormatInfo& info)
 {
     __unused(info);
 

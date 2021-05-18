@@ -27,8 +27,6 @@ KERNEL_CXXFLAGS += \
 	$(CXXFLAGS) \
 	-Ikernel/ \
 	-fno-rtti \
-	-mno-sse \
-	-fno-exceptions \
 	-ffreestanding \
 	-nostdlib \
 	-D__KERNEL__ 

@@ -13,10 +13,10 @@ struct FormatInfo
     int base = 10;
 };
 
-ErrorOr<size_t> format(Stream& stream, const char* fmt);
+ErrorOrSizeT format(Stream& stream, const char* fmt);
 
 template<typename First, typename... Args>
-ErrorOr<size_t> format(Stream& stream, const char* fmt, First first, Args... args)
+ErrorOrSizeT format(Stream& stream, const char* fmt, First first, Args... args)
 {
     size_t written = 0;
 
@@ -46,41 +46,41 @@ ErrorOr<size_t> format(Stream& stream, const char* fmt, First first, Args... arg
                 }
             }
 
-            ErrorOr<size_t> res_format = format(stream, first, info);
+            ErrorOrSizeT res_format = format(stream, first, info);
 
             written += res_format.value();
 
             if(res_format != Error::SUCCEED) {
-                return ErrorOr<size_t>(res_format.error(), written);
+                return ErrorOrSizeT(res_format.error(), written);
             }
 
-            ErrorOr<size_t> res_print = format(stream, &fmt[i+1], args...);
+            ErrorOrSizeT res_print = format(stream, &fmt[i+1], args...);
 
             written += res_print.value();
 
             if(res_print != Error::SUCCEED) {
-                return ErrorOr<size_t>(res_print.error(), written);
+                return ErrorOrSizeT(res_print.error(), written);
             } else {
-                return ErrorOr<size_t>(written);
+                return ErrorOrSizeT(written);
             }
         } else {
             auto error = stream.write_byte(fmt[i]);
 
             if(error != Error::SUCCEED) {
-                return ErrorOr<size_t>(error, written);
+                return ErrorOrSizeT(error, written);
             }
 
             written++;
         }
     }
 
-    return ErrorOr<size_t>(written);
+    return ErrorOrSizeT(written);
 }
 
-ErrorOr<size_t> format(Stream& stream, const char* string, FormatInfo& info);
-ErrorOr<size_t> format(Stream& stream, const void* value, FormatInfo& info);
-ErrorOr<size_t> format(Stream& stream, unsigned int value, FormatInfo& info);
-ErrorOr<size_t> format(Stream& stream, Formattable& value, FormatInfo& info);
-ErrorOr<size_t> format(Stream& stream, Formattable* value, FormatInfo& info);
+ErrorOrSizeT format(Stream& stream, const char* string, FormatInfo& info);
+ErrorOrSizeT format(Stream& stream, const void* value, FormatInfo& info);
+ErrorOrSizeT format(Stream& stream, unsigned int value, FormatInfo& info);
+ErrorOrSizeT format(Stream& stream, Formattable& value, FormatInfo& info);
+ErrorOrSizeT format(Stream& stream, Formattable* value, FormatInfo& info);
 
 }

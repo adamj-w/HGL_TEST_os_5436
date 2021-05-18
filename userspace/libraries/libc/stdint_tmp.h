@@ -1,4 +1,6 @@
-#if defined(__GNU__) || defined(__LLVM__)
+#if defined(__LLVM__)
+#include_next <stdint.h>
+#elif defined(__GNU__)
 
 #ifdef __INT8_TYPE__
 typedef __INT8_TYPE__ int8_t;
@@ -332,4 +334,6 @@ typedef __UINTMAX_TYPE__ uintmax_t;
 
 #endif
 
+#else
+#error No suitable stdint.h
 #endif

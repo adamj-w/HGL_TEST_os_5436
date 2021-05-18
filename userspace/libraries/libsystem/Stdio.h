@@ -11,7 +11,7 @@ extern RefPtr<Stream> stderr;
 extern RefPtr<Stream> stdlog;
 
 template<typename... Args>
-ErrorOr<size_t> print(Args... args) {
+ErrorOrSizeT print(Args... args) {
     return format(*stdout, args...);
 }
 

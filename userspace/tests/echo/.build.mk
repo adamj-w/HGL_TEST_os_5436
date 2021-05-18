@@ -1,0 +1,4 @@
+BINS += ECHO
+
+ECHO_NAME = echo
+ECHO_LIBS = c

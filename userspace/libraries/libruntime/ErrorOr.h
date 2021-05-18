@@ -1,6 +1,7 @@
 #pragma once
 
 #include <libruntime/Error.h>
+#include <stddef.h>
 
 namespace hegel 
 {
@@ -8,7 +9,7 @@ namespace hegel
 template<typename T>
 class ErrorOr
 {
-private:
+protected:
     Error _error;
     T _value;
 
@@ -39,6 +40,19 @@ public:
     bool operator!=(T value) {
         return _value != value;
     }
+};
+
+class ErrorOrSizeT : public ErrorOr<size_t>
+{
+public:
+    size_t unwrap() { return succeed() ? _value : -1; }
+
+    ErrorOrSizeT(Error error) : ErrorOr(error) {}
+    ErrorOrSizeT(size_t value) : ErrorOr(value) {}
+    ErrorOrSizeT(Error error, size_t value) : ErrorOr(error, value) {}
+
+    template<typename U>
+    ErrorOrSizeT(ErrorOr<U> error, size_t value) : ErrorOr(error, value) {}
 };
 
 }

@@ -2,7 +2,7 @@
 #include <libruntime/Types.h>
 #include <libruntime/Assert.h>
 #include <libsystem/Logger.h>
-#include <libsystem/__alloc__.h>
+#include <__alloc__.h>
 
 using namespace hegel;
 

@@ -5,19 +5,19 @@
 
 namespace hegel {
 
-ErrorOr<size_t> format(Stream& stream, const char* fmt)
+ErrorOrSizeT format(Stream& stream, const char* fmt)
 {
     return stream.write(fmt, strlen(fmt));
 }
 
-ErrorOr<size_t> format(Stream& stream, const char* string, FormatInfo& info)
+ErrorOrSizeT format(Stream& stream, const char* string, FormatInfo& info)
 {
     __unused(info);
 
     return stream.write(string, strlen(string));
 }
 
-ErrorOr<size_t> format(Stream& stream, const void* ptr, FormatInfo& info)
+ErrorOrSizeT format(Stream& stream, const void* ptr, FormatInfo& info)
 {
     return format(stream, reinterpret_cast<uintptr_t>(ptr), info);
 }
@@ -59,7 +59,7 @@ static int uint_to_str(unsigned int value, char* str, unsigned int base) {
     return written;
 }
 
-ErrorOr<size_t> format(Stream& stream, unsigned int value, FormatInfo& info)
+ErrorOrSizeT format(Stream& stream, unsigned int value, FormatInfo& info)
 {
     char buffer[32];
     uint_to_str(value, buffer, info.base);
@@ -71,12 +71,12 @@ ErrorOr<size_t> format(Stream& stream, unsigned int value, FormatInfo& info)
     }
 }
 
-ErrorOr<size_t> format(Stream& stream, Formattable& value, FormatInfo& info)
+ErrorOrSizeT format(Stream& stream, Formattable& value, FormatInfo& info)
 {
     return value.format(stream, info);
 }
 
-ErrorOr<size_t> format(Stream& stream, Formattable* value, FormatInfo& info)
+ErrorOrSizeT format(Stream& stream, Formattable* value, FormatInfo& info)
 {
     return value->format(stream, info);
 }

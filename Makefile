@@ -35,7 +35,8 @@ CXX_WARNINGS :=
 
 BUILD_INCLUDE := \
 	-I. \
-	-Iuserspace/libraries
+	-Iuserspace/libraries \
+	-Iuserspace/libraries/libc 
 
 BUILD_DEFINES := \
 	-D__BUILD_ARCH__=\""$(CONFIG_ARCH)"\" \
@@ -49,6 +50,7 @@ BUILD_DEFINES := \
 CFLAGS= \
 	-std=c11 \
 	-MD \
+	-mno-sse \
 	--sysroot=$(SYSROOT) \
 	$(CONFIG_OPTIMIZATIONS) \
 	$(BUILD_WARNING) \
@@ -59,6 +61,8 @@ CFLAGS= \
 CXXFLAGS= \
 	-std=c++17 \
 	-MD \
+	-mno-sse \
+	-fno-exceptions \
 	--sysroot=$(SYSROOT) \
 	$(CONFIG_OPTIMIZATIONS) \
 	$(BUILD_WARNING) \
@@ -70,6 +74,10 @@ CXXFLAGS= \
 include make/toolchain/$(CONFIG_ARCH)-$(CONFIG_TOOLCHAIN).mk
 
 include kernel/.build.mk
+include userspace/arch/.build.mk
+
+include userspace/libraries/.build.mk
+include userspace/tests/.build.mk
 
 include make/distro/.build.mk
 

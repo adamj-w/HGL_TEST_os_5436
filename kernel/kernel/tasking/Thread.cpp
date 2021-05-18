@@ -74,7 +74,7 @@ void Thread::unblock()
     _blocker->unblock();
 }
 
-ErrorOr<size_t> Thread::format(Stream& stream, FormatInfo& info)
+ErrorOrSizeT Thread::format(Stream& stream, FormatInfo& info)
 {
     __unused(info);
 
