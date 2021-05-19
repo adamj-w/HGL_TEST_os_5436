@@ -1,6 +1,6 @@
 #include <kernel/tasking/Process.h>
 
-#include <libruntime/SpinLock.h>
+#include <libsystem/SpinLock.h>
 #include <libsystem/Logger.h>
 
 #include <libc/string.h>
@@ -24,11 +24,11 @@ Process::Process(const char* str)
 
 Process::~Process() {}
 
-ErrorOrSizeT Process::format(Stream& stream, FormatInfo& info)
+/*ErrorOrSizeT Process::format(Stream& stream, FormatInfo& info)
 {
     __unused(info);
 
     return hegel::format(stream, "{}({})", _name, _id);
-}
+}*/
 
 }

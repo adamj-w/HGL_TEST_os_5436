@@ -29,7 +29,7 @@ BUILD_DIRECTORY_BINS=$(SYSROOT)/usr/bin
 BUILD_DIRECTORY_UTILITIES=$(SYSROOT)/bin
 
 BUILD_WARNING := \
-	-Wall -Wextra -Werror
+	-Wall -Wextra -Werror #-Wno-non-pod-varargs
 
 CXX_WARNINGS := 
 
@@ -77,7 +77,7 @@ include kernel/.build.mk
 include userspace/arch/.build.mk
 
 include userspace/libraries/.build.mk
-include userspace/tests/.build.mk
+#include userspace/tests/.build.mk
 
 include make/distro/.build.mk
 

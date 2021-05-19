@@ -1,7 +1,7 @@
 #include "Scheduling.h"
 
-#include <libruntime/LinkedList.h>
-#include <libruntime/SpinLock.h>
+#include <libsystem/LinkedList.h>
+#include <libsystem/SpinLock.h>
 #include <libsystem/Logger.h>
 
 #include <libsystem/__plugs__.h>
@@ -68,7 +68,7 @@ static void unblock_blocked_thread()
 {
     _blocked_threads->foreach([](RefPtr<Thread> thread) -> Iteration {
         if(thread->should_unblock()) {
-            logger_info("Unblocking {}", thread);
+            logger_info("Unblocking {}", (uint32_t)thread);
             thread->unblock();
             thread->set_state(ThreadState::READY);
             _blocked_threads->remove(thread);

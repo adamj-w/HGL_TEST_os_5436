@@ -3,7 +3,7 @@
 #include <kernel/scheduling/BlockerSleep.h>
 #include <kernel/scheduling/BlockerJoin.h>
 
-#include <libruntime/SpinLock.h>
+#include <libsystem/SpinLock.h>
 #include <libsystem/Logger.h>
 
 #include <arch/Arch.h>
@@ -74,12 +74,12 @@ void Thread::unblock()
     _blocker->unblock();
 }
 
-ErrorOrSizeT Thread::format(Stream& stream, FormatInfo& info)
+/*ErrorOrSizeT Thread::format(Stream& stream, FormatInfo& info)
 {
     __unused(info);
 
     return hegel::format(stream, "Thread(id={}, state={}, process={})", id(), state_string(), process());
-}
+}*/
 
 RefPtr<Thread> Thread::create(RefPtr<Process> process, ThreadEntry entry)
 {
@@ -96,7 +96,7 @@ RefPtr<Thread> Thread::create(RefPtr<Process> process, ThreadEntry entry)
 
 void Thread::exit()
 {
-    logger_info("{} kill himself.", scheduling::running_thread());
+    logger_info("{} kill himself.", (uint32_t)scheduling::running_thread());
     scheduling::update_thread_state(scheduling::running_thread(), ThreadState::STOPPED);
     arch::yield();
     assert_not_reached();
@@ -105,7 +105,7 @@ void Thread::exit()
 void Thread::sleep(unsigned long long time)
 {
     if(time > 0) {
-        logger_info("{} is going to sleep for {}ms", scheduling::running_thread(), time);
+        logger_info("{} is going to sleep for {}ms", (uint32_t)scheduling::running_thread(), time);
         scheduling::running_thread()->block(new scheduling::BlockerSleep(time));
     }
 }
@@ -115,7 +115,7 @@ void Thread::join(RefPtr<Thread> thread_to_join)
     assert(thread_to_join != nullptr);
 
     if(thread_to_join->state() != ThreadState::STOPPED) {
-        logger_info("{} is joining {}", scheduling::running_thread(), thread_to_join);
+        logger_info("{} is joining {}", (uint32_t)scheduling::running_thread(), (uint32_t)thread_to_join);
         scheduling::running_thread()->block(new BlockerJoin(thread_to_join));
     }
 }

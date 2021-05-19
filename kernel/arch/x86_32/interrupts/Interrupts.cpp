@@ -43,7 +43,7 @@ void interrupts_initialize()
 extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFrame)
 {
     if(stackFrame.intno < 32) {
-        logger_fatal("CPU exception: {} error={}", stackFrame.intno, stackFrame.err);
+        logger_fatal("CPU exception: %d error=%d", stackFrame.intno, stackFrame.err);
     }
 
     if(stackFrame.intno == 32) {

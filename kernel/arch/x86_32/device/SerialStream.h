@@ -1,8 +1,8 @@
 #pragma once
 
 #include "../x86.h"
-#include <libruntime/Types.h>
-#include <libruntime/Error.h>
+#include <libsystem/Types.h>
+#include <libsystem/Error.h>
 #include <libsystem/Stream.h>
 
 namespace hegel::arch::x86 {

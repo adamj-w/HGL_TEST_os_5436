@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libruntime/RefPtr.h>
+#include <libsystem/RefPtr.h>
 
 namespace hegel::tasking {
 class Thread;

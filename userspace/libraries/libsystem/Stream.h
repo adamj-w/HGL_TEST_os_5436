@@ -1,8 +1,8 @@
 #pragma once
 
-#include <libruntime/ErrorOr.h>
-#include <libruntime/RefCounted.h>
-#include <libruntime/Types.h>
+#include <libsystem/ErrorOr.h>
+#include <libsystem/RefCounted.h>
+#include <libsystem/Types.h>
 
 namespace hegel {
 

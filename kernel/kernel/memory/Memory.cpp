@@ -2,7 +2,7 @@
 #include "MemoryRegionAllocator.h"
 #include "../System.h"
 
-#include <libruntime/Assert.h>
+#include <libsystem/Assert.h>
 #include <libsystem/Logger.h>
 
 namespace hegel::memory {
@@ -60,7 +60,7 @@ void free_region(MemoryRegion region)
             free_region(lower);
         }
     } else if(!_bootstrapped) {
-        logger_info("Bootstrapping with {}", region);
+        logger_info("Bootstrapping with {}", reinterpret_cast<uint32_t>(&region));
 
         _bootstrap = region;
         _bootstrapped = true;

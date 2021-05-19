@@ -2,7 +2,7 @@
 
 #include "MemoryRegion.h"
 
-#include <libruntime/Vector.h>
+#include <libsystem/Vector.h>
 
 namespace hegel::memory {
 

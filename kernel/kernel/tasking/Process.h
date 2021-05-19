@@ -1,8 +1,8 @@
 #pragma once
 
-#include <libsystem/Formattable.h>
-#include <libruntime/RefCounted.h>
-#include <libruntime/OwnPtr.h>
+#include <libsystem/Format.h>
+#include <libsystem/RefCounted.h>
+#include <libsystem/OwnPtr.h>
 
 #include <kernel/memory/AddressSpace.h>
 #include <kernel/tasking/Promotion.h>
@@ -11,7 +11,7 @@ namespace hegel::tasking {
 
 #define PROCESS_NAME_MAXLEN 256
 
-class Process final : public Formattable, public RefCounted<Process>
+class Process final : public Format, public RefCounted<Process>
 {
 private:
     int _id;
@@ -29,7 +29,7 @@ public:
     Process(const char* name);
     ~Process();
 
-    ErrorOrSizeT format(Stream& stream, FormatInfo& info);
+    //ErrorOrSizeT format(Stream& stream, FormatInfo& info);
 
 };
 

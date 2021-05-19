@@ -1,7 +1,7 @@
 #pragma once
 
-#include <libruntime/LinkedList.h>
-#include <libruntime/RefPtr.h>
+#include <libsystem/LinkedList.h>
+#include <libsystem/RefPtr.h>
 
 #include <kernel/memory/MemoryObject.h>
 

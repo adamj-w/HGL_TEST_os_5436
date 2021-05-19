@@ -2,8 +2,8 @@
 #include <libc/math.h>
 #include <libc/string.h>
 
-#include <libruntime/Macros.h>
-#include <libruntime/Assert.h>
+#include <libsystem/Macros.h>
+#include <libsystem/Assert.h>
 
 unsigned long int strtoul(const char* str, char** endptr, const int base)
 {

@@ -1,10 +1,9 @@
 #include <libc/string.h>
 #include <libc/stdio.h>
-#include <libruntime/Assert.h>
+#include <libsystem/Assert.h>
 #include <libsystem/Logger.h>
 #include <__alloc__.h>
 #include <libsystem/__plugs__.h>
-#include <libsystem/Stdio.h>
 
 using namespace hegel;
 

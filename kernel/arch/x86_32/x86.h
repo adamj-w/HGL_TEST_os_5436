@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libruntime/Types.h>
+#include <libsystem/Types.h>
 
 namespace hegel::arch::x86 {
 

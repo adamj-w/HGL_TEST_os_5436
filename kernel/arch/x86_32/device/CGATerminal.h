@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libruntime/Macros.h>
+#include <libsystem/Macros.h>
 #include <libterminal/Terminal.h>
 
 namespace hegel::arch::x86 {

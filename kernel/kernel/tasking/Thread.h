@@ -1,9 +1,9 @@
 #pragma once
 
-#include <libruntime/RefCounted.h>
-#include <libruntime/RefPtr.h>
-#include <libruntime/OwnPtr.h>
-#include <libsystem/Formattable.h>
+#include <libsystem/RefCounted.h>
+#include <libsystem/RefPtr.h>
+#include <libsystem/OwnPtr.h>
+#include <libsystem/Format.h>
 
 #include <kernel/tasking/Stack.h>
 #include <kernel/tasking/Process.h>
@@ -30,7 +30,7 @@ enum class ThreadState
     THREAD_STATE_LIST(THREAD_STATE_ENUM_ENTRY) __COUNT
 };
 
-class Thread : public RefCounted<Thread>, public Formattable
+class Thread : public RefCounted<Thread>, public Format
 {
 private:
     int _id;
@@ -78,7 +78,7 @@ public:
     static void cleanup(RefPtr<Thread> thread);
     static void foreach(Iteration (*callback)(RefPtr<Thread>));
 
-    ErrorOrSizeT format(Stream& stream, FormatInfo& info);
+    //ErrorOrSizeT format(Stream& stream, FormatInfo& info);
 };
 
 }

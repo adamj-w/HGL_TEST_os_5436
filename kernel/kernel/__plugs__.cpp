@@ -1,12 +1,24 @@
 #include <libsystem/__plugs__.h>
 
-#include <libruntime/SpinLock.h>
+#include <libsystem/SpinLock.h>
 
 #include "arch/Arch.h"
 #include "System.h"
 #include "memory/Memory.h"
 
 namespace hegel::plugs {
+
+Stream* in_stream = nullptr;
+Stream* out_stream = nullptr;
+Stream* err_stream = nullptr;
+Stream* log_stream = nullptr;
+
+extern "C" void __plug_init_libsystem(hegel::Stream* stream)
+{
+    out_stream = stream;
+    err_stream = stream;
+    log_stream = stream;
+}
 
 size_t get_page_size()
 {

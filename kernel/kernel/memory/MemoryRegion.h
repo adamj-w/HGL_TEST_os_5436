@@ -1,11 +1,11 @@
 #pragma once
 
-#include <libruntime/Types.h>
-#include <libsystem/Formattable.h>
+#include <libsystem/Types.h>
+#include <libsystem/Format.h>
 
 namespace hegel::memory {
 
-class MemoryRegion : public hegel::Formattable
+class MemoryRegion : public Format
 {
 private:
     uintptr_t _base_page;
@@ -43,12 +43,12 @@ public:
 
     bool operator==(MemoryRegion& other);
 
-    ErrorOrSizeT format(Stream& stream, FormatInfo& info) 
+    /*ErrorOrSizeT format(Stream& stream, FormatInfo& info) 
     {
         __unused(info);
 
         return hegel::format(stream, "MemoryRegion({#x} - {#x})", base_address(), end_address() - 1);
-    }
+    }*/
 };
 
 }

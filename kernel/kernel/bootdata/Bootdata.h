@@ -2,7 +2,7 @@
 
 #include <thirdparty/multboot2.h>
 
-#include <libsystem/Formattable.h>
+#include <libsystem/Format.h>
 #include <kernel/memory/MemoryRegion.h>
 #include <kernel/graphics/Graphics.h>
 
@@ -23,7 +23,7 @@ enum MemoryMapEntryType
     MEMORY_MAP_ENTRY_KERNEL
 };
 
-struct MemoryMapEntry : public hegel::Formattable
+struct MemoryMapEntry : public Format
 {
     uintptr_t addr;
     size_t size;
@@ -38,7 +38,7 @@ struct MemoryMapEntry : public hegel::Formattable
         return memory::MemoryRegion::from_non_aligned_address(addr, size);
     }
 
-    ErrorOrSizeT format(Stream& stream, FormatInfo& info)
+    /*ErrorOrSizeT format(Stream& stream, FormatInfo& info)
     {
         __unused(info);
 
@@ -52,7 +52,7 @@ struct MemoryMapEntry : public hegel::Formattable
         };
 
         return hegel::format(stream, "MemoryMapEntry({}, {})", region(), multiboot_memory_type_name[type]);
-    } 
+    }*/ 
 };
 
 struct Module
