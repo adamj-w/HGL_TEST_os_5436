@@ -60,7 +60,7 @@ void free_region(MemoryRegion region)
             free_region(lower);
         }
     } else if(!_bootstrapped) {
-        logger_info("Bootstrapping with {}", reinterpret_cast<uint32_t>(&region));
+        logger_info("Bootstrapping with %#010x", reinterpret_cast<uint32_t>(&region));
 
         _bootstrap = region;
         _bootstrapped = true;

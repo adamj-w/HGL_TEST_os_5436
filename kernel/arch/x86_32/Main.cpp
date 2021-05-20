@@ -65,12 +65,12 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
 
     multiboot.with_memory_map([&](boot::MemoryMapEntry entry) -> Iteration {
         if(entry.is_avail()) {
-            logger_info("Marking %x as usable memory.", (uint32_t)&entry);
+            logger_info("Marking %#010X as usable memory.", (uint32_t)&entry);
             memory::free_region(entry.region());
         } else if(entry.is_bad()) {
             // TODO: logger_warn("Badram at {}, skipping", (uint32_t)entry.region());
         } else {
-            logger_info("Skipping {}", (uint32_t)&entry);
+            logger_info("Skipping %#010X", (uint32_t)&entry);
         }
 
         return Iteration::CONTINUE;
@@ -107,8 +107,8 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
     auto task_b = tasking::Thread::create(tasking::kernel_process(), reinterpret_cast<tasking::ThreadEntry>(taskB));
     task_b->start();
 
-    printf("\e[31mHegelOS\e[m (C) 2020 by Adam Warren ({} {})\n", __BUILD_TARGET__, __BUILD_GITREF__);
-    printf("Codename: \e[31mMarshmallow\e[m built on (\"{}\")\n", __BUILD_UNAME__);
+    printf("\e[31mHegelOS\e[m (C) 2020 by Adam Warren (%s %s)\n", __BUILD_TARGET__, __BUILD_GITREF__);
+    printf("Codename: \e[31mMarshmallow\e[m built on (\"%s\")\n", __BUILD_UNAME__);
     printf("================================================================================\n");
     printf("~ \e[94mh\e[m ");
 

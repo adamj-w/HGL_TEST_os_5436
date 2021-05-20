@@ -96,7 +96,7 @@ RefPtr<Thread> Thread::create(RefPtr<Process> process, ThreadEntry entry)
 
 void Thread::exit()
 {
-    logger_info("{} kill himself.", (uint32_t)scheduling::running_thread());
+    logger_info("%d stopped itself.", scheduling::running_thread()->id());
     scheduling::update_thread_state(scheduling::running_thread(), ThreadState::STOPPED);
     arch::yield();
     assert_not_reached();
@@ -115,7 +115,7 @@ void Thread::join(RefPtr<Thread> thread_to_join)
     assert(thread_to_join != nullptr);
 
     if(thread_to_join->state() != ThreadState::STOPPED) {
-        logger_info("{} is joining {}", (uint32_t)scheduling::running_thread(), (uint32_t)thread_to_join);
+        logger_info("%d is joining %d", scheduling::running_thread()->id(), thread_to_join->id());
         scheduling::running_thread()->block(new BlockerJoin(thread_to_join));
     }
 }

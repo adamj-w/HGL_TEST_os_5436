@@ -33,6 +33,7 @@ typedef struct printf_info
     char padding;
     printf_align_t align;
     size_t length;
+    bool prefix;
 
     void* output;
     size_t written;

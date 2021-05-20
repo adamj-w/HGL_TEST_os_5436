@@ -4,14 +4,15 @@
 
 #include <libsystem/__plugs__.h>
 
-FILE* stdout = (FILE*)hegel::plugs::out_stream;
-FILE* stdin = (FILE*)hegel::plugs::in_stream;
-FILE* stderr = (FILE*)hegel::plugs::err_stream;
+FILE* stdout = (FILE*)(&hegel::plugs::out_stream);
+FILE* stdin = (FILE*)(&hegel::plugs::in_stream);
+FILE* stderr = (FILE*)(&hegel::plugs::err_stream);
 
 size_t fwrite(const void* buf, size_t size, size_t count, FILE* file)
 {
-    auto* stream = reinterpret_cast<hegel::Stream*>(file);
-    return stream->write(buf, size * count).unwrap();
+    assert(file);
+    auto* stream = reinterpret_cast<hegel::Stream**>(file);
+    return (*stream)->write(buf, size * count).unwrap();
 }
 
 int putchar(int c)

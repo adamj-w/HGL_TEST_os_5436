@@ -9,7 +9,7 @@ static uint64_t _current_tick;
 
 void PANIC(const char* message) 
 {
-    logger_fatal("KERNEL PANIC: {}", message);
+    logger_fatal("KERNEL PANIC: %s", message);
 
     //__alloc__::liballoc_dump();
 
