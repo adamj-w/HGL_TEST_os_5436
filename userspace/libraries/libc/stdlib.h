@@ -2,10 +2,9 @@
 #define STDLIB_H 1
 
 #include <stddef.h>
+#include "bits/libc.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+__BEGIN_HEADER
 
 // Exit codes
 #define EXIT_FAILURE (-1)
@@ -70,8 +69,6 @@ div_t div(int number, int denom);
 ldiv_t ldiv(long number, long denom);
 lldiv_t lldiv(long long number, long long denom);
 
-#ifdef __cplusplus
-}
-#endif
+__END_HEADER
 
 #endif

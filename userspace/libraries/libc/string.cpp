@@ -46,6 +46,17 @@ void strapd(char* str, char c)
     str[len + 1] = '\0';
 }
 
+void strnapd(char* str, char c, size_t n)
+{
+    for(size_t i = 0; i < (n - 1); i++) {
+		if(str[i] == '\0') {
+			str[i] = c;
+			str[i + 1] = '\0';
+			return;
+		}
+	}
+}
+
 void strrvs(char* str)
 {
     for(size_t i = 0, j = strlen(str) - 1; i < j; i++, j--) {

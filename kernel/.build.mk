@@ -14,7 +14,8 @@ KERNEL_ASSEMBLY_SOURCES += \
 KERNEL_LIBRARIES_SOURCES = \
 	$(wildcard userspace/libraries/libterminal/*.cpp) \
 	$(wildcard userspace/libraries/libsystem/*.cpp) \
-	$(wildcard userspace/libraries/libc/*.cpp) 
+	$(wildcard userspace/libraries/libc/*.cpp) \
+	$(wildcard userspace/libraries/libc/printf/*.cpp) \
 
 KERNEL_BINARY = $(BUILDROOT)/kernel.bin
 

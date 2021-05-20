@@ -2,7 +2,6 @@
 #include <libc/stdio.h>
 #include <libsystem/Assert.h>
 #include <libsystem/Logger.h>
-#include <__alloc__.h>
 #include <libsystem/__plugs__.h>
 
 using namespace hegel;

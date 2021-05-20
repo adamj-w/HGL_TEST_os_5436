@@ -2,7 +2,8 @@
 #include <libsystem/Types.h>
 #include <libsystem/Assert.h>
 #include <libsystem/Logger.h>
-#include <__alloc__.h>
+
+#include <stdlib.h>
 
 using namespace hegel;
 
@@ -40,33 +41,33 @@ extern "C" void __cxa_pure_virtual()
 
 void* operator new(size_t size)
 {
-    return __alloc__::malloc(size - size % 4 + 4);
+    return malloc(size - size % 4 + 4);
 }
 
 void* operator new[](size_t size)
 {
-    return __alloc__::malloc(size - size % 4 + 4);
+    return malloc(size - size % 4 + 4);
 }
 
 void operator delete(void* ptr)
 {
-    __alloc__::free(ptr);
+    free(ptr);
 }
 
 void operator delete(void* ptr, unsigned long size)
 {
     __unused(size);
-    __alloc__::free(ptr);
+    free(ptr);
 }
 
 void operator delete[](void* ptr) 
 {
-    __alloc__::free(ptr);
+    free(ptr);
 }
 
 void operator delete[](void* ptr, unsigned long size)
 {
     __unused(size);
-    __alloc__::free(ptr);
+    free(ptr);
 }
 

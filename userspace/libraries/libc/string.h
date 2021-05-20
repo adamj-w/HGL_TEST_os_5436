@@ -3,9 +3,9 @@
 
 #include "stddef.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "bits/libc.h"
+
+__BEGIN_HEADER
 
 // Copying functions
 void* memcpy(void* dst, const void* src, size_t n);
@@ -17,6 +17,7 @@ char* strncpy(char* dst, const char* src, size_t n);
 char* strcat(char* s1, const char* s2);
 char* strncat(char* s1, const char* s2, size_t n);
 void strapd(char* s, char c);
+void strnapd(char* s, char c, size_t n);
 
 // Comparison functions
 int memcmp(const void* s1, const void* s2, size_t n);
@@ -41,8 +42,6 @@ char* strerror(int errnum);
 size_t strlen(const char* s);
 void strrvs(char* s);
 
-#ifdef __cplusplus
-}
-#endif
+__END_HEADER
 
 #endif

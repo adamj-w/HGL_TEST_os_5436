@@ -2,12 +2,11 @@
 #define STDIO_H 1
 
 #include <stdint.h>
-#include "stddef.h"
+#include <stddef.h>
 #include <stdarg.h>
+#include "bits/libc.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+__BEGIN_HEADER
 
 #define BUFSIZ 1024
 
@@ -44,6 +43,7 @@ long ftell(FILE* stream);
 void rewind(FILE* stream);
 
 // All Output functions
+int putc(int c, FILE* stream);
 int fputc(int c, FILE* stream);
 int fputs(const char* s, FILE* stream);
 size_t fwrite(const void* buf, size_t size, size_t nmemb, FILE* stream);
@@ -83,8 +83,6 @@ int feof(FILE* stream);
 int ferror(FILE* stream);
 void perror(const char* str);
 
-#ifdef __cplusplus
-}
-#endif
+__END_HEADER
 
 #endif
