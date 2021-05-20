@@ -13,18 +13,18 @@ static const RSDPDescriptor* _rsdp_addr;
 void initialize(const void* rsdp)
 {
     if(!((const RSDPDescriptor*) rsdp)->validate()) {
-        logger_error("Failed to validate RSDP at address {#x}!", rsdp);
+        logger_error("Failed to validate RSDP at address %#010X!", rsdp);
         return;
     }
     
     _rsdp_addr = (const RSDPDescriptor*) rsdp;
 
-    logger_info("RSDP has OEM of {}", &_rsdp_addr->OEMID[0]);
+    logger_info("RSDP has OEM of %s", &_rsdp_addr->OEMID[0]);
 
     RSDT* rsdt = reinterpret_cast<RSDT*>(_rsdp_addr->RsdtAddress);
 
     if(!rsdt->Header.validate()) {
-        logger_error("Failed to validate RSDT at addr {#x}!", rsdt);
+        logger_error("Failed to validate RSDT at addr %#010X!", rsdt);
     }
 
     for(size_t i = 0; i < rsdt->child_count(); i++) {
@@ -37,7 +37,7 @@ void initialize(const void* rsdp)
         strncpy(tmp3, sdt->OEMTableID, 8);
         tmp1[4] = '\0'; tmp2[6] = '\0'; tmp3[8] = '\0';
 
-        logger_info("ACPI: {} - {} - {}", tmp1, tmp2, tmp3);
+        logger_info("ACPI: %s - %s - %s", tmp1, tmp2, tmp3);
     }
 }
 

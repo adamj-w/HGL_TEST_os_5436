@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libruntime/Macros.h>
+#include <libsystem/Macros.h>
 
 namespace hegel::acpi {
 

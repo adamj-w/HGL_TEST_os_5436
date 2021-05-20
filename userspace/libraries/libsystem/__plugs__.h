@@ -1,12 +1,20 @@
 #pragma once
 
-#include <libruntime/ErrorOr.h>
-#include <libruntime/Types.h>
-#include <libruntime/Macros.h>
+#include <libsystem/ErrorOr.h>
+#include <libsystem/Types.h>
+#include <libsystem/Macros.h>
 
-extern "C" void __plug_init_libsystem();
+#include <libsystem/Stream.h>
+
+extern "C" void __plug_init_libsystem(hegel::Stream* stream);
+extern "C" void __plug_fini_libsystem();
 
 namespace hegel::plugs {
+
+extern Stream* in_stream;
+extern Stream* out_stream;
+extern Stream* err_stream;
+extern Stream* log_stream;
 
 bool memory_is_locked();
 void memory_lock();

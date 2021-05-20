@@ -1,7 +1,6 @@
 #include "System.h"
 
 #include <libsystem/Logger.h>
-#include <libsystem/__alloc__.h>
 #include <arch/Arch.h>
 
 namespace hegel {
@@ -10,9 +9,9 @@ static uint64_t _current_tick;
 
 void PANIC(const char* message) 
 {
-    logger_fatal("KERNEL PANIC: {}", message);
+    logger_fatal("KERNEL PANIC: %s", message);
 
-    __alloc__::liballoc_dump();
+    //__alloc__::liballoc_dump();
 
     arch::stop();
 }

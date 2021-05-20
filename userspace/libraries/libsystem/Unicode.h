@@ -1,6 +1,6 @@
 #pragma once
 
-#include <libruntime/Types.h>
+#include <libsystem/Types.h>
 #include <libsystem/Stream.h>
 
 namespace hegel {

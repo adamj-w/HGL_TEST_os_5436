@@ -2,7 +2,7 @@
 
 #include <arch/Arch.h>
 
-#include <libruntime/Assert.h>
+#include <libsystem/Assert.h>
 
 namespace hegel::memory {
 

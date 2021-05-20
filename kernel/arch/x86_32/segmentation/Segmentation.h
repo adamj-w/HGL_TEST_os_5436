@@ -1,7 +1,7 @@
 #pragma once
 
-#include <libruntime/Macros.h>
-#include <libruntime/Types.h>
+#include <libsystem/Macros.h>
+#include <libsystem/Types.h>
 
 namespace hegel::arch::x86 {
 

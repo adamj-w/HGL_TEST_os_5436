@@ -1,8 +1,8 @@
 #pragma once
 
-#include <libruntime/ErrorOr.h>
-#include <libruntime/RefCounted.h>
-#include <libruntime/Types.h>
+#include <libsystem/ErrorOr.h>
+#include <libsystem/RefCounted.h>
+#include <libsystem/Types.h>
 
 namespace hegel {
 
@@ -25,12 +25,12 @@ public:
     virtual bool writable();
     virtual bool seekable();
 
-    virtual ErrorOr<size_t> read(void* buffer, size_t size);
-    virtual ErrorOr<size_t> write(const void* buffer, size_t size);
+    virtual ErrorOrSizeT read(void* buffer, size_t size);
+    virtual ErrorOrSizeT write(const void* buffer, size_t size);
     virtual ErrorOr<byte> read_byte();
     virtual Error write_byte(byte byte);
-    virtual ErrorOr<size_t> seek(Stream::Offset offset, SeekOrigin origin);
-    virtual ErrorOr<size_t> tell();
+    virtual ErrorOrSizeT seek(Stream::Offset offset, SeekOrigin origin);
+    virtual ErrorOrSizeT tell();
 
     virtual void flush();
 };

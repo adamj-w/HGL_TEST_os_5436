@@ -2,6 +2,9 @@
 #include <libc/math.h>
 #include <libc/string.h>
 
+#include <libsystem/Macros.h>
+#include <libsystem/Assert.h>
+
 unsigned long int strtoul(const char* str, char** endptr, const int base)
 {
 	// TODO: read standard for endptr behavior
@@ -29,4 +32,15 @@ unsigned long int strtoul(const char* str, char** endptr, const int base)
 		*endptr = (char*)str+lastDigI;
 
 	return value;
+}
+
+extern "C" void _exit(int status) __noreturn;
+void exit(int status)
+{
+	#ifndef __KERNEL__
+	_exit(status);
+	#else
+	__unused(status);
+	assert_not_reached();
+	#endif
 }

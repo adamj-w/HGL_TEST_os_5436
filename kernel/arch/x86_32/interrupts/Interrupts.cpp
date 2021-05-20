@@ -4,6 +4,7 @@
 
 #include <libsystem/Logger.h>
 #include <kernel/scheduling/Scheduling.h>
+#include <kernel/tasking/Process.h>
 #include <kernel/System.h>
 
 #include "arch/Arch.h"
@@ -40,10 +41,20 @@ void interrupts_initialize()
     logger_info("Interrupts should be working.");
 }
 
+static const char* __cpu_exception_string[] = {
+    "Divide Error", "Debug", "NMI Interrupt", "Breakpoint", "Overflow", "Bound Range Exceeded",
+    "Invalid Opcode", "Device Not Available (FPU)", "Double Fault", "CoProcessor Segment Overrun (FPU)",
+    "Invalid TSS", "Segment Not Present", "Stack Segment Fault", "General Protection", "Page Fault",
+    "Reserved", "FPU Error", "Alignment Check", "Machine Check", "SIMD FPU error", "Virtualization Exception",
+    "Control Protection Exception"
+};
+
 extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFrame)
 {
-    if(stackFrame.intno < 32) {
-        logger_fatal("CPU exception: {} error={}", stackFrame.intno, stackFrame.err);
+    if(stackFrame.intno <= 21) {
+        logger_error("CPU exception in process %d: %s IRQ%d!", 
+            scheduling::running_process()->id(),
+            __cpu_exception_string[stackFrame.intno], stackFrame.intno);
     }
 
     if(stackFrame.intno == 32) {

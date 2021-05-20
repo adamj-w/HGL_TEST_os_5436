@@ -1,9 +1,9 @@
-#include <libruntime/Assert.h>
+#include <libsystem/Assert.h>
 #include <libsystem/Logger.h>
 #include <libsystem/__plugs__.h>
 
 extern "C" void __assert_failed(const char* file, int line, const char* expr) {
-    logger_fatal("Assertion failed \"{}\" at {}:{d}", expr, file, line);
+    logger_fatal("Assertion failed \"%s\" at %s:%d", expr, file, line);
 
     hegel::plugs::assert_failed();
 }

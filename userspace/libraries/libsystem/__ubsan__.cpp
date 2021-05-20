@@ -1,10 +1,10 @@
-#include <libruntime/Types.h>
-#include <libruntime/Assert.h>
-#include <libruntime/Macros.h>
+#include <libsystem/Types.h>
+#include <libsystem/Assert.h>
+#include <libsystem/Macros.h>
 #include <libsystem/Logger.h>
 
 #define UBSAN_LOG(__args...) \
-    hegel::log(hegel::LogLevel::ERROR, data->location.filename, data->location.line, __args);
+    log(LogLevel::ERROR, data->location.filename, data->location.line, __args);
 
 struct UbsanSourceLocation
 {

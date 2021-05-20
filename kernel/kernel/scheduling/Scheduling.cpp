@@ -1,7 +1,7 @@
 #include "Scheduling.h"
 
-#include <libruntime/LinkedList.h>
-#include <libruntime/SpinLock.h>
+#include <libsystem/LinkedList.h>
+#include <libsystem/SpinLock.h>
 #include <libsystem/Logger.h>
 
 #include <libsystem/__plugs__.h>
@@ -32,7 +32,7 @@ void update_thread_state(RefPtr<Thread> thread, ThreadState state)
 
     if(thread->state() == ThreadState::EMBRYO) {
         if(_running_thread == nullptr) {
-            logger_info("Using {} as running thread", &*thread);
+            logger_info("Using %d as running thread", thread->id());
             _running_thread = thread;
         }
     } else if(thread->state() == ThreadState::BLOCKED) {
@@ -59,6 +59,11 @@ RefPtr<Thread> running_thread()
     return _running_thread;
 }
 
+RefPtr<Process> running_process()
+{
+    return running_thread()->process();
+}
+
 bool can_schedule()
 {
     return !plugs::memory_is_locked() && !_threads_lock.is_acquired();
@@ -68,7 +73,7 @@ static void unblock_blocked_thread()
 {
     _blocked_threads->foreach([](RefPtr<Thread> thread) -> Iteration {
         if(thread->should_unblock()) {
-            logger_info("Unblocking {}", thread);
+            logger_info("Unblocking %d", thread->id());
             thread->unblock();
             thread->set_state(ThreadState::READY);
             _blocked_threads->remove(thread);

@@ -1,7 +1,7 @@
 #pragma once
 
-#include <libruntime/Types.h>
-#include <libruntime/Macros.h>
+#include <libsystem/Types.h>
+#include <libsystem/Macros.h>
 
 namespace hegel::acpi {
 

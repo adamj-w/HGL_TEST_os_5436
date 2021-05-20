@@ -1,4 +1,4 @@
-#include <libruntime/Macros.h>
+#include <libsystem/Macros.h>
 #include <libsystem/Stream.h>
 
 namespace hegel {
@@ -21,7 +21,7 @@ bool Stream::seekable()
     return false;
 }
 
-ErrorOr<size_t> Stream::read(void* buffer, size_t size)
+ErrorOrSizeT Stream::read(void* buffer, size_t size)
 {
     size_t readed;
 
@@ -29,16 +29,16 @@ ErrorOr<size_t> Stream::read(void* buffer, size_t size)
         auto result = read_byte();
 
         if(result != Error::SUCCEED) {
-            return ErrorOr<size_t>(result.error(), readed);
+            return ErrorOrSizeT(result.error(), readed);
         } else {
             ((byte*)buffer)[readed] = result.value();
         }
     }
 
-    return ErrorOr<size_t>(readed);
+    return ErrorOrSizeT(readed);
 }
 
-ErrorOr<size_t> Stream::write(const void* buffer, size_t size)
+ErrorOrSizeT Stream::write(const void* buffer, size_t size)
 {
     size_t written;
 
@@ -46,11 +46,11 @@ ErrorOr<size_t> Stream::write(const void* buffer, size_t size)
         auto result = write_byte(((byte*)buffer)[written]);
 
         if(result != Error::SUCCEED) {
-            return ErrorOr<size_t>(result, written);
+            return ErrorOrSizeT(result, written);
         }
     }
 
-    return ErrorOr<size_t>(written);
+    return ErrorOrSizeT(written);
 }
 
 ErrorOr<byte> Stream::read_byte()
@@ -65,17 +65,17 @@ Error Stream::write_byte(byte byte)
     return Error::NOT_IMPLEMENTED;
 }
 
-ErrorOr<size_t> Stream::seek(Stream::Offset offset, SeekOrigin origin)
+ErrorOrSizeT Stream::seek(Stream::Offset offset, SeekOrigin origin)
 {
     __unused(offset);
     __unused(origin);
 
-    return ErrorOr<size_t>(Error::NOT_IMPLEMENTED);
+    return ErrorOrSizeT(Error::NOT_IMPLEMENTED);
 }
 
-ErrorOr<size_t> Stream::tell()
+ErrorOrSizeT Stream::tell()
 {
-    return ErrorOr<size_t>(Error::NOT_IMPLEMENTED);
+    return ErrorOrSizeT(Error::NOT_IMPLEMENTED);
 }
 
 void Stream::flush() {}

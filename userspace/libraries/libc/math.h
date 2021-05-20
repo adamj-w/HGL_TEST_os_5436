@@ -1,9 +1,9 @@
 #ifndef MATH_H
 #define MATH_H 1
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include "bits/libc.h"
+
+__BEGIN_HEADER
 
 long long int llpow(long long x, long long y);
 unsigned long long int ullpow(unsigned long long x, long long y);
@@ -16,8 +16,6 @@ unsigned long long int ullpow(unsigned long long x, long long y);
 #  define islessgreater(x, y)	__builtin_islessgreater(x, y)
 #  define isunordered(x, y)	__builtin_isunordered(x, y)
 
-#ifdef __cplusplus
-}
-#endif
+__END_HEADER
 
 #endif

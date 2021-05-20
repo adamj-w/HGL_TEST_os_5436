@@ -2,7 +2,7 @@
 
 #include <kernel/System.h>
 #include <kernel/scheduling/Blocker.h>
-#include <libruntime/Types.h>
+#include <libsystem/Types.h>
 
 namespace hegel::scheduling {
 
