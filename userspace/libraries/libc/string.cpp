@@ -1,5 +1,7 @@
 #include <libc/string.h>
 
+#include <stdint.h>
+
 void* memcpy(void* dst, const void* src, size_t n)
 {
 	unsigned int* dstp = (unsigned int*)dst;
@@ -30,6 +32,19 @@ void* memset(void* s, int c, size_t n)
 	}
 
 	return s;
+}
+
+int memcmp(const void* b1, const void* b2, size_t n)
+{
+	const uint8_t* s1 = (uint8_t*)b1;
+	const uint8_t* s2 = (uint8_t*)b2;
+
+	for(size_t i = 0; i < n; i++) {
+		int cmp = s1[i] - s2[i];
+		if(cmp != 0) return cmp;
+	}
+
+	return 0;
 }
 
 size_t strlen(const char* str)

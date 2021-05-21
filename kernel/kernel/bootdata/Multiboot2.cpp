@@ -101,9 +101,16 @@ const Bootdata* Multiboot::get_bootdata()
     strncpy(_bootdata.command_line, "", MULTIBOOT_COMMAND_LINE_SIZE);
     
     for_each_tag([](multiboot_tag* tag) -> Iteration {
-        logger_info("{#x}: {}", tag, _multiboot2_tag_name[tag->type]);
+        logger_info("%#010X: %s", tag, _multiboot2_tag_name[tag->type]);
 
-        return Iteration::STOP;
+        switch(tag->type) {
+        case MULTIBOOT_TAG_TYPE_ACPI_OLD:
+            multiboot_tag_old_acpi* acpi = (multiboot_tag_old_acpi*)tag;
+            _bootdata.acpi_rsdp_address = (uintptr_t)&acpi->rsdp[0];
+            return Iteration::CONTINUE;
+        }
+
+        return Iteration::CONTINUE;
     });
 
     return &_bootdata;
