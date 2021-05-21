@@ -6,6 +6,10 @@
 
 #include <kernel/memory/MemoryRegion.h>
 
+#ifndef ARCH_PAGE_SIZE
+#define ARCH_PAGE_SIZE 1024
+#endif
+
 namespace hegel::tasking {
 class Thread;
 class Process;

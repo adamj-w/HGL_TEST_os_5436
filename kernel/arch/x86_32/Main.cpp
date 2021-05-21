@@ -4,6 +4,7 @@
 #include "segmentation/Segmentation.h"
 #include "interrupts/Interrupts.h"
 #include "acpi/ACPI.h"
+#include "smbios/SMBIOS.h"
 
 #include <kernel/System.h>
 #include <kernel/bootdata/Multiboot2.h>
@@ -23,7 +24,6 @@ namespace hegel {
 extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
 {
     auto serial = SerialStream(SerialPort::COM1);
-
     __plug_init_libsystem(&serial);
 
     logger_info("Booting...");
@@ -66,6 +66,8 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
     plugs::out_stream = cga_term.give_ref();
 
     acpi::initialize(bootdata);
+
+    smbios::initialize({0xF0000, 0xFFFF});
 
     system_main(bootdata);
 }

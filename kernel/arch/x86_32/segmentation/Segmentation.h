@@ -14,7 +14,7 @@ namespace hegel::arch::x86 {
 #define GDT_ACCESSED 0b00000001
 
 #define GDT_FLAGS 0b1100
-#define TSS_FLAGS 0
+#define TSS_FLAGS 0b0000
 
 struct __packed TSS
 {
