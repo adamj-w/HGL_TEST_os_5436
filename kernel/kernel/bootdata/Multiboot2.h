@@ -8,13 +8,11 @@
 
 #include <thirdparty/multboot2.h>
 
-namespace hegel::graphics {
+namespace graphics {
 struct Framebuffer;
 }
 
-namespace hegel::boot {
-
-struct Bootdata;
+namespace boot {
 
 class Multiboot
 {
@@ -61,27 +59,6 @@ public:
 
     const char* bootloader();
     const char* commandline();
-
-    template<typename Callback>
-    void with_memory_map(Callback callback)
-    {
-        auto* tag = find_tag<multiboot_tag_mmap>(MULTIBOOT_TAG_TYPE_MMAP);
-
-        if(tag) {
-            for(multiboot_memory_map_t* mmap = tag->entries; 
-                (uint8_t*)mmap < (uint8_t*)tag + tag->size; 
-                mmap = (multiboot_memory_map_t*)((uintptr_t)mmap + tag->entry_size))
-            {
-                MemoryMapEntry entry;
-                entry.addr = mmap->addr;
-                entry.size = mmap->len;
-                entry.type = mmap->type;
-                if(callback(entry) == Iteration::STOP) {
-                    return;
-                }
-            }
-        }
-    }
 
     const void* get_ACPI_rsdp();
     const graphics::Framebuffer* get_framebuffer();

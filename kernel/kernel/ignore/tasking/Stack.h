@@ -16,7 +16,7 @@ private:
 public:
     Stack(size_t page_count) 
     {
-        _region = memory::alloc_region(page_count);
+        _region = memory::alloc(page_count * ARCH_PAGE_SIZE);
         _ptr = _region.end_address();
     }
 

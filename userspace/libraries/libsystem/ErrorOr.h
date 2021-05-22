@@ -3,9 +3,6 @@
 #include <libsystem/Error.h>
 #include <stddef.h>
 
-namespace hegel 
-{
-
 template<typename T>
 class ErrorOr
 {
@@ -54,5 +51,3 @@ public:
     template<typename U>
     ErrorOrSizeT(ErrorOr<U> error, size_t value) : ErrorOr(error, value) {}
 };
-
-}

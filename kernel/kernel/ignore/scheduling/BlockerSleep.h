@@ -1,6 +1,6 @@
 #pragma once
 
-#include <kernel/System.h>
+#include <kernel/system/System.h>
 #include <kernel/scheduling/Blocker.h>
 #include <libsystem/Types.h>
 

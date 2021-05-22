@@ -4,6 +4,6 @@
 
 namespace smbios {
 
-void initialize(MemoryRange range);
+void initialize(memory::MemoryRange range);
 
 }

@@ -4,7 +4,7 @@
 
 #include <libsystem/Logger.h>
 
-#include <kernel/System.h>
+#include <kernel/system/System.h>
 
 namespace hegel::acpi {
 

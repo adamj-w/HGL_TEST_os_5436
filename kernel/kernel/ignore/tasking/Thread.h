@@ -5,7 +5,7 @@
 #include <libsystem/OwnPtr.h>
 #include <libsystem/Format.h>
 
-#include <kernel/tasking/Stack.h>
+//#include <kernel/tasking/Stack.h>
 #include <kernel/tasking/Process.h>
 #include <kernel/scheduling/Blocker.h>
 #include <kernel/scheduling/Policy.h>

@@ -3,8 +3,6 @@
 #include <libsystem/Macros.h>
 #include <libsystem/Types.h>
 
-namespace hegel {
-
 template<typename T>
 class RefPtr
 {
@@ -158,6 +156,4 @@ template<typename Type, typename... Args>
 inline RefPtr<Type> make(Args&& ... args)
 {
     return RefPtr<Type>(adopt(*new Type(args...)));
-}
-
 }

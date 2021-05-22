@@ -1,23 +1,27 @@
 #pragma once
 
-#include <libsystem/RefCounted.h>
+#include <kernel/memory/MemoryRange.h>
 
-#include <kernel/memory/MemoryRegion.h>
+namespace memory {
 
-namespace hegel::memory {
-
-class MemoryObject : public RefCounted<MemoryObject>
+struct MemoryObject
 {
-private:
-    int _id;
-    MemoryRegion _region;
+    int id;
+    MemoryRange _range;
+    
+    int refcount;
 
-public:
-    int id() const { return _id; }
-    MemoryRegion region() const { return _region; }
-
-    MemoryObject(MemoryRegion region);
-    ~MemoryObject();
+    MemoryRange range() { return _range; }
 };
+
+void object_initialize();
+
+MemoryObject* object_create(size_t size);
+void object_destroy(MemoryObject* object);
+
+MemoryObject* object_ref(MemoryObject* object);
+void object_deref(MemoryObject* object);
+
+MemoryObject* object_by_id(int id);
 
 }

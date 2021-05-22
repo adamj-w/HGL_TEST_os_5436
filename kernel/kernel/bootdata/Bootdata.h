@@ -2,8 +2,7 @@
 
 #include <thirdparty/multboot2.h>
 
-#include <libsystem/Format.h>
-#include <kernel/memory/MemoryRegion.h>
+#include <kernel/memory/MemoryRange.h>
 #include <kernel/graphics/Graphics.h>
 
 #define MULTIBOOT_BOOTLOADER_NAME_SIZE 64
@@ -11,7 +10,7 @@
 #define MULTIBOOT_MEMORY_MAP_SIZE 64
 #define MULTIBOOT_MODULES_SIZE 16
 
-namespace hegel::boot {
+namespace boot {
 
 enum MemoryMapEntryType
 {
@@ -23,41 +22,15 @@ enum MemoryMapEntryType
     MEMORY_MAP_ENTRY_KERNEL
 };
 
-struct MemoryMapEntry : public Format
+struct MemoryMapEntry
 {
-    uintptr_t addr;
-    size_t size;
-    int type;
-
-    bool is_avail() { return type == MULTIBOOT_MEMORY_AVAILABLE; }
-    bool is_reserved() { return type == MULTIBOOT_MEMORY_RESERVED; }
-    bool is_bad() { return type == MULTIBOOT_MEMORY_BADRAM; }
-
-    memory::MemoryRegion region()
-    {
-        return memory::MemoryRegion::from_non_aligned_address(addr, size);
-    }
-
-    /*ErrorOrSizeT format(Stream& stream, FormatInfo& info)
-    {
-        __unused(info);
-
-        const char* multiboot_memory_type_name[] = {
-            "INVALID",
-            "AVAILABLE",
-            "RESERVED",
-            "ACPI_RECLAIMABLE",
-            "NVS",
-            "BADRAM",
-        };
-
-        return hegel::format(stream, "MemoryMapEntry({}, {})", region(), multiboot_memory_type_name[type]);
-    }*/ 
+    memory::MemoryRange range{};
+    MemoryMapEntryType type;
 };
 
 struct Module
 {
-    memory::MemoryRegion range;
+    memory::MemoryRange range;
     char command_line[MULTIBOOT_COMMAND_LINE_SIZE];
 };
 

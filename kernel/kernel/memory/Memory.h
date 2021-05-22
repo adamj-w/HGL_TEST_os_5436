@@ -1,16 +1,23 @@
 #pragma once
 
-#include <libsystem/RefPtr.h>
-#include <libsystem/Types.h>
+#include <libsystem/ErrorOr.h>
 
-#include "MemoryRegion.h"
+#include <kernel/bootdata/Bootdata.h>
+#include <kernel/memory/MemoryRange.h>
 
-namespace hegel::memory {
+namespace memory {
 
-MemoryRegion alloc_region(size_t page_count);
+void memory_initialize(const boot::Bootdata* bootdata);
 
-void free_region(MemoryRegion region);
+size_t get_used();
+size_t get_total();
 
-bool is_bootstrapped();
+Error map(void* address_space, MemoryRange range, MemoryFlags flags);
+Error map_identity(void* address_space, MemoryRange range, MemoryFlags flags);
+
+ErrorOr<uintptr_t> alloc(void* address_space, size_t size, MemoryFlags flags);
+Error alloc_identity(void* address_space, MemoryFlags flags, uintptr_t* out_vaddr);
+
+Error free(void* address_space, MemoryRange range);
 
 }

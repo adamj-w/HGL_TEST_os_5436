@@ -3,7 +3,7 @@
 #include <libsystem/SpinLock.h>
 
 #include "arch/Arch.h"
-#include "System.h"
+#include "system/System.h"
 #include "memory/Memory.h"
 
 namespace hegel::plugs {
@@ -42,24 +42,24 @@ void memory_unlock()
     _memory_lock.release();
 }
 
-ErrorOr<uintptr_t> memory_alloc(size_t page_count)
+ErrorOr<uintptr_t> memory_alloc(size_t size)
 {
-    return ErrorOr<uintptr_t>(hegel::memory::alloc_region(page_count).base_address());
+    return memory::alloc(arch::kernel_address_space(), size, MEMORY_CLEAR);
 }
 
-void memory_free(uintptr_t addr, size_t page_count)
+void memory_free(uintptr_t addr, size_t size)
 {
-    hegel::memory::free_region(hegel::memory::MemoryRegion::from_aligned_address(addr, page_count));
+    memory::free(arch::kernel_address_space(), (memory::MemoryRange){(uintptr_t)addr, size});
 }
 
 void assert_failed() 
 {
-    PANIC("Assertion failed in kernel.");
+    PANIC("Assertion failed in kernel.\n");
 }
 
 void assert_not_reached_reached() 
 {
-    PANIC("Reached unreachable assertion in kernel.");
+    PANIC("Reached unreachable assertion in kernel.\n");
 }
 
 }

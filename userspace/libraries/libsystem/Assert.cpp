@@ -9,7 +9,7 @@ extern "C" void __assert_failed(const char* file, int line, const char* expr) {
 }
 
 extern "C" void __assert_not_reach_reached(const char* file, int line) {
-    logger_fatal("Expression reached {}:{d}", file, line);
+    logger_fatal("Expression reached %s:%d", file, line);
 
     hegel::plugs::assert_not_reached_reached();
 }

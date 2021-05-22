@@ -3,9 +3,7 @@
 #include "../x86.h"
 
 #include <libsystem/Logger.h>
-#include <kernel/scheduling/Scheduling.h>
-#include <kernel/tasking/Process.h>
-#include <kernel/System.h>
+#include <kernel/system/System.h>
 
 #include "arch/Arch.h"
 
@@ -53,14 +51,12 @@ extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFr
 {
     if(stackFrame.intno <= 21) {
         logger_error("CPU exception in process %d: %s IRQ%d!", 
-            scheduling::running_process()->id(),
+            0, //scheduling::running_process()->id(),
             __cpu_exception_string[stackFrame.intno], stackFrame.intno);
     }
 
     if(stackFrame.intno == 32) {
-        hegel::tick();
-
-        esp = hegel::scheduling::schedule(esp);
+        hegel::system_tick();
     }
 
     //logger_info("Executing intno: {}", stackFrame.intno);

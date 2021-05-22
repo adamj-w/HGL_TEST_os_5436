@@ -1,7 +1,9 @@
 #include "SMBIOS.h"
-#include "smbios_types.h"
+#include "SMBIOSTypes.h"
 
 #include <libsystem/Logger.h>
+
+using namespace memory;
 
 namespace smbios {
 

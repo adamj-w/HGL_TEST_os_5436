@@ -3,7 +3,12 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include <arch/Arch.h>
+namespace memory {
+
+#define MEMORY_NONE (0)
+#define MEMORY_USER (1 << 0)
+#define MEMORY_CLEAR (1 << 1)
+typedef unsigned int MemoryFlags;
 
 class MemoryRange
 {
@@ -28,3 +33,5 @@ public:
     static MemoryRange from_non_aligned_address(uintptr_t base, size_t size);
     static MemoryRange around_non_aligned_address(uintptr_t base, size_t size);
 };
+
+}

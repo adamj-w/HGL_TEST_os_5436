@@ -6,13 +6,14 @@
 #include "acpi/ACPI.h"
 #include "smbios/SMBIOS.h"
 
-#include <kernel/System.h>
+#include <kernel/system/System.h>
 #include <kernel/bootdata/Multiboot2.h>
 #include <kernel/bootdata/Bootdata.h>
 #include <kernel/memory/Memory.h>
 
 #include <libsystem/__plugs__.h>
 #include <libsystem/Logger.h>
+#include <libsystem/RefPtr.h>
 
 #include <arch/Arch.h>
 
@@ -38,35 +39,17 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
     } else {
         logger_info("Found valid bootloader with name \"%s\"", multiboot.bootloader());
     }
-
-    multiboot.with_memory_map([&](boot::MemoryMapEntry entry) -> Iteration {
-        if(entry.is_avail()) {
-            logger_info("Marking %#010X as usable memory.", entry.addr);
-            memory::free_region(entry.region());
-        } else if(entry.is_bad()) {
-            logger_warn("Badram at %#010X, skipping", entry.addr);
-        } else {
-            logger_info("Skipping %#010X", entry.addr);
-        }
-
-        return Iteration::CONTINUE;
-    });
     
-    if(!memory::is_bootstrapped()) {
-        PANIC("Failed to bootstrap kernel memory allocation");
-    }
-
     auto* bootdata = multiboot.get_bootdata();
 
     segmentation_initialize();
     interrupts_initialize();
 
-    auto cga_term = make<CGATerminal>(reinterpret_cast<void*>(0xB8000));
+    /*auto cga_term = make<CGATerminal>(reinterpret_cast<void*>(0xB8000));
     //cga_term->disable_cursor();
-    plugs::out_stream = cga_term.give_ref();
+    plugs::out_stream = cga_term.give_ref();*/
 
     acpi::initialize(bootdata);
-
     smbios::initialize({0xF0000, 0xFFFF});
 
     system_main(bootdata);
