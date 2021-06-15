@@ -5,6 +5,7 @@
 #include "interrupts/Interrupts.h"
 #include "acpi/ACPI.h"
 #include "smbios/SMBIOS.h"
+#include "CPUID.h"
 
 #include <kernel/system/System.h>
 #include <kernel/bootdata/Multiboot2.h>
@@ -26,6 +27,8 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
 {
     auto serial = SerialStream(SerialPort::COM1);
     __plug_init_libsystem(&serial);
+
+    if(!cpuid_supported()) logger_fatal("System doesn't support CPUID.");
 
     logger_info("Booting...");
     logger_info("Hegel Kernel (%s %s)", __BUILD_TARGET__, __BUILD_GITREF__);
