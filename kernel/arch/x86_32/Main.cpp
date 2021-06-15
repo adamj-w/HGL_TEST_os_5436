@@ -30,7 +30,7 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
 
     if(!cpuid_supported()) logger_fatal("System doesn't support CPUID.");
     cpuid_check_system_requirements();
-
+    
     logger_info("Booting...");
     logger_info("Hegel Kernel (%s %s)", __BUILD_TARGET__, __BUILD_GITREF__);
     logger_info("Kernel built on \"%s\"", __BUILD_UNAME__);

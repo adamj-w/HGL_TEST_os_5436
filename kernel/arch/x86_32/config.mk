@@ -1,1 +1,1 @@
-KERNEL_CXXFLAGS+=-mno-80387 -mno-mmx -mno-sse -mno-sse2
+KERNEL_CXXFLAGS+=-mno-80387 -mno-mmx -msse -msse2

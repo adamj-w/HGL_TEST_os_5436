@@ -1,5 +1,6 @@
 #include "system/System.h"
 #include "memory/Memory.h"
+#include "modules/Modules.h"
 
 #include <arch/Arch.h>
 
@@ -18,11 +19,8 @@ void system_main(const boot::Bootdata* bootdata)
     printf("Codename: \e[31mMarshmallow\e[m built on (\"%s\")\n", __BUILD_UNAME__);
     printf("================================================================================\n");
     printf("~ \e[94mh\e[m ");
-
-    //tasking::Thread::join(task_a);
-    //tasking::Thread::join(task_b);
-
-    //arch::shutdown();
+    
+    modules::modules_initialize(bootdata);
 }
 
 }

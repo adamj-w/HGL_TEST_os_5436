@@ -151,6 +151,16 @@ void multiboot2_parse_memory_map(Bootdata* bootdata, struct multiboot_tag_mmap* 
     }
 }
 
+void multiboot2_parse_module(Bootdata* bootdata, struct multiboot_tag_module* m)
+{
+    assert(bootdata->modules_size < MULTIBOOT_MODULES_SIZE);
+
+    Module* module = &bootdata->modules[bootdata->modules_size];
+    module->range = memory::MemoryRange::around_non_aligned_address(m->mod_start, m->mod_end - m->mod_start);
+    strncpy(module->command_line, (const char*)m->cmdline, MULTIBOOT_COMMAND_LINE_SIZE);
+    bootdata->modules_size++;
+}
+
 const Bootdata* Multiboot::get_bootdata()
 {
     strncpy(_bootdata.bootloader, "unknown", MULTIBOOT_BOOTLOADER_NAME_SIZE);
@@ -167,6 +177,10 @@ const Bootdata* Multiboot::get_bootdata()
 
         case MULTIBOOT_TAG_TYPE_MMAP: {
             multiboot2_parse_memory_map(&_bootdata, (multiboot_tag_mmap *)tag);
+        } break;
+
+        case MULTIBOOT_TAG_TYPE_MODULE: {
+            multiboot2_parse_module(&_bootdata, (multiboot_tag_module*)tag);
         } break;
         }
 

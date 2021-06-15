@@ -17,11 +17,11 @@ private:
     size_t _size = 0;
 
 public:
-    uintptr_t base() { return _base; }
-    uintptr_t end() { return _base + _size + 1; }
-    size_t size() { return _size; }
+    uintptr_t base() const { return _base; }
+    uintptr_t end() const { return _base + _size + 1; }
+    size_t size() const { return _size; }
     size_t page_count();
-    bool empty() { return size() == 0; }
+    bool empty() const { return size() == 0; }
 
     MemoryRange() {}
     MemoryRange(const uintptr_t base, const size_t size)

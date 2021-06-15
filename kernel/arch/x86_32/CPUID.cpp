@@ -1,6 +1,7 @@
 #include "CPUID.h"
 
-#include <string.h>
+#include <libsystem/Logger.h>
+#include <kernel/system/System.h>
 
 namespace hegel::arch::x86 {
 
@@ -72,11 +73,22 @@ const char* cpuid_vendor_name(void)
     return &_cpuid_vendor_name[0];
 }
 
+static void _failed_feat_check(const char* feature)
+{
+    logger_fatal("System does not support \"%s\"", feature);
+    PANIC("CPU doesn't support all required features\n");
+}
+
 void cpuid_check_system_requirements(void)
 {
-    uint32_t ecx, edx;
+    uint32_t ecx = 0xCCCC, edx = 0xDDDD;
 
     cpuid_get_features(&ecx, &edx);
+
+    if((edx & CPUID_FEAT_EDX_FPU) == 0) _failed_feat_check("x87 FPU");
+    if((edx & CPUID_FEAT_EDX_SSE) == 0) _failed_feat_check("SSE");
+    if((edx & CPUID_FEAT_EDX_SSE2) == 0) _failed_feat_check("SSE2");
+    if((edx & CPUID_FEAT_EDX_PAE) == 0) _failed_feat_check("PAE");
 }
 
 }

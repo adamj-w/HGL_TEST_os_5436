@@ -36,13 +36,17 @@ global cpuid_get_features ; extern "C" void cpuid_get_features(uint32_t* ecx, ui
 cpuid_get_features:
     push ebp
     mov ebp, esp
+    push ebx
 
     mov eax, 0x1
     cpuid
 
-    mov [ebp+0xC], ecx
-    mov [ebp+0x8], edx
+    mov ebx, [ebp+0xC]
+    mov [ebx], edx
+    mov ebx, [ebp+0x8]
+    mov [ebx], ecx
 
+    pop ebx
     mov esp, ebp
     pop ebp
     ret
