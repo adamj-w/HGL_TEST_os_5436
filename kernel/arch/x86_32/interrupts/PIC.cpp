@@ -75,4 +75,10 @@ void pic_ack(int intno)
     out8(0x20, 0x20);
 }
 
+void pic_disable()
+{
+    out8(PIC2_DATA, 0xff);
+    out8(PIC2_DATA, 0xff);
+}
+
 }

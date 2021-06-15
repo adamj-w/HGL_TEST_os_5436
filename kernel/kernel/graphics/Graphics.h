@@ -2,7 +2,7 @@
 
 #include <libsystem/Types.h>
 
-namespace hegel::graphics {
+namespace graphics {
 
 struct Framebuffer
 {

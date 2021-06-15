@@ -2,7 +2,7 @@
 
 #include <libc/string.h>
 
-namespace hegel::graphics {
+namespace graphics {
 
 static Framebuffer _framebuffer;
 

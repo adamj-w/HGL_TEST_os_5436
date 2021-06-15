@@ -6,8 +6,6 @@
 #include <libsystem/Types.h>
 #include <libsystem/Assert.h>
 
-namespace hegel {
-
 template<typename T>
 struct LinkedListItem
 {
@@ -267,5 +265,3 @@ public:
         }
     }
 };
-
-}

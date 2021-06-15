@@ -3,7 +3,6 @@ include kernel/arch/$(CONFIG_ARCH)/.build.mk
 KERNEL_SOURCES += \
 	$(wildcard kernel/kernel/*.cpp) \
 	$(wildcard kernel/kernel/*/*.cpp) \
-	$(wildcard kernel/kernel/*/*/*.cpp) \
 	$(wildcard kernel/arch/$(CONFIG_ARCH)/*.cpp) \
 	$(wildcard kernel/arch/$(CONFIG_ARCH)/*/*.cpp) \
 

@@ -1,8 +1,5 @@
 #pragma once
 
-namespace hegel
-{
-
 #define ERROR_LIST(__ITEM) \
     __ITEM(SUCCEED) \
     __ITEM(NOT_IMPLEMENTED) \
@@ -12,12 +9,11 @@ namespace hegel
     __ITEM(NO_SUCH_THREAD) \
     __ITEM(NO_CHILD_THREAD) \
     __ITEM(NO_SUCH_PROCESS) \
-    __ITEM(NO_CHILD_PROCESS)
+    __ITEM(NO_CHILD_PROCESS) \
+    __ITEM(OUT_OF_MEMORY)
 
 enum class Error
 {
 #define ERROR_ENUM_ENTRY(__entry) __entry,
     ERROR_LIST(ERROR_ENUM_ENTRY)
 };
-
-}

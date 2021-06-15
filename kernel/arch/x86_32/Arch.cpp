@@ -1,17 +1,24 @@
 #include "arch/Arch.h"
 #include "x86.h"
+#include "paging/Paging.h"
+#include "device/CGATerminal.h"
 
-#include "tasking/x86Thread.h"
-#include <kernel/tasking/Thread.h>
-#include <kernel/tasking/Process.h>
+#include <libsystem/__plugs__.h>
+#include <libsystem/RefPtr.h>
 
-using namespace hegel::memory;
+using namespace memory;
 using namespace hegel::arch::x86;
 
 extern int __kernel_start;
 extern int __kernel_end;
 
 namespace hegel::arch {
+
+void temporary_graphics_init()
+{
+    RefPtr<CGATerminal> terminal = make<CGATerminal>((void*)0xb8000);
+    hegel::plugs::out_stream = terminal.give_ref();
+}
 
 void stop() 
 {
@@ -55,20 +62,8 @@ void shutdown()
 
 size_t get_page_size()
 {
-    return 4096;
+    return ARCH_PAGE_SIZE;
 }
 
-memory::MemoryRegion get_kernel_region()
-{
-    uintptr_t addr = reinterpret_cast<uintptr_t>(&__kernel_start);
-    size_t size = &__kernel_end - &__kernel_start;
-
-    return MemoryRegion::create_around_non_aligned_address(addr, size);
-}
-
-RefPtr<tasking::Thread> create_thread(RefPtr<tasking::Process> process, tasking::ThreadEntry entry)
-{
-    return make<x86::x86Thread>(process, entry);
-}
 
 }

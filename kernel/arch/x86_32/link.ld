@@ -3,7 +3,7 @@ ENTRY(_start)
 SECTIONS
 {
     . = 1M;
-    __kernel_start = .;
+    __start = .;
 
     .text BLOCK(4K) : ALIGN(4K)
     {
@@ -27,5 +27,5 @@ SECTIONS
         *(.bss)
     }
 
-    __kernel_end = .;
+    __end = .;
 }
