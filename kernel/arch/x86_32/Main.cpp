@@ -29,16 +29,18 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
     __plug_init_libsystem(&serial);
 
     if(!cpuid_supported()) logger_fatal("System doesn't support CPUID.");
+    cpuid_check_system_requirements();
 
     logger_info("Booting...");
     logger_info("Hegel Kernel (%s %s)", __BUILD_TARGET__, __BUILD_GITREF__);
     logger_info("Kernel built on \"%s\"", __BUILD_UNAME__);
+    logger_info("System running on \"%s\"", cpuid_vendor_name());
 
     auto multiboot = boot::Multiboot(multiboot_addr, multiboot_magic);
 
     if(!multiboot.is_valid()) {
-        logger_fatal("Invalid bootloader, please boot with multiboot2 specification");
-        PANIC("Invalid bootloader, please try with valid multiboot2 loader.");
+        logger_fatal("Invalid bootloader with magic %#010X, please boot with multiboot2 specification", multiboot_magic);
+        PANIC("Invalid bootloader, please try with valid multiboot2 loader.\n");
     } else {
         logger_info("Found valid bootloader with name \"%s\"", multiboot.bootloader());
     }

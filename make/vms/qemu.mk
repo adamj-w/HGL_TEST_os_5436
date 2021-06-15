@@ -1,4 +1,5 @@
-QEMU?=qemu-system-i386
+QEMU?=QEMU_PA_SAMPLES=128 QEMU_AUDIO_DRV=pa qemu-system-i386 
+# env vars to fix pulseaudio issues
 
 QEMU_DISK=-cdrom $(BOOTDISK)
 
