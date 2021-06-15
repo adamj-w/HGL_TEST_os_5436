@@ -45,14 +45,12 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
     segmentation_initialize();
     interrupts_initialize();
 
-    /*auto cga_term = make<CGATerminal>(reinterpret_cast<void*>(0xB8000));
-    //cga_term->disable_cursor();
-    plugs::out_stream = cga_term.give_ref();*/
-
     acpi::initialize(bootdata);
     smbios::initialize({0xF0000, 0xFFFF});
 
     system_main(bootdata);
+
+    arch::stop();
 }
 
 }

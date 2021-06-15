@@ -1,7 +1,10 @@
 #include "arch/Arch.h"
 #include "x86.h"
-
 #include "paging/Paging.h"
+#include "device/CGATerminal.h"
+
+#include <libsystem/__plugs__.h>
+#include <libsystem/RefPtr.h>
 
 using namespace memory;
 using namespace hegel::arch::x86;
@@ -10,6 +13,12 @@ extern int __kernel_start;
 extern int __kernel_end;
 
 namespace hegel::arch {
+
+void temporary_graphics_init()
+{
+    RefPtr<CGATerminal> terminal = make<CGATerminal>((void*)0xb8000);
+    hegel::plugs::out_stream = terminal.give_ref();
+}
 
 void stop() 
 {

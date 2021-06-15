@@ -50,7 +50,7 @@ static const char* __cpu_exception_string[] = {
 extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFrame)
 {
     if(stackFrame.intno <= 21) {
-        logger_error("CPU exception in process %d: %s IRQ%d!", 
+        logger_error("CPU exception in process %d: %s (IRQ%d)!", 
             0, //scheduling::running_process()->id(),
             __cpu_exception_string[stackFrame.intno], stackFrame.intno);
     }

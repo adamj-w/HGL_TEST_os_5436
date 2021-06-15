@@ -12,6 +12,9 @@ using namespace hegel;
 #define ALIGN_TYPE char
 #define ALIGN_INFO sizeof(ALIGN_TYPE) * 16
 
+#define _PAGE_SIZE (4096)
+#define _PAGE_COUNT (16)
+
 #define ALIGN(ptr) \
     if(ALIGNMENT > 1) { \
         uintptr_t diff; \
@@ -61,7 +64,6 @@ struct AllocMinor
 static AllocMajor* l_memRoot = nullptr;
 static AllocMajor* l_bestBet = nullptr;
 
-static unsigned int l_pageCount = 16;
 static unsigned long long l_allocated = 0;
 static unsigned long long l_inuse = 0;
 
@@ -96,34 +98,23 @@ extern "C" void liballoc_dump()
 
 static AllocMajor* allocate_new_page(unsigned int size)
 {
-    unsigned int st;
-    AllocMajor* maj;
-
-    st = size + sizeof(AllocMajor);
+    size_t st = size + sizeof(AllocMajor);
     st += sizeof(AllocMinor);
-    
-    if((st % plugs::get_page_size()) == 0)
-        st = st / (plugs::get_page_size());
-    else
-        st = st / (plugs::get_page_size()) + 1;
 
-    if(st < l_pageCount)
-        st = l_pageCount;
-
-    auto result = plugs::memory_alloc(st);
-
-    if(result.error() != Error::SUCCEED) {
-        l_warningCount++;
-        //logger_warn("plugs::memory_alloc({}) return nullptr", st);
-        return nullptr;
+    if((st % _PAGE_SIZE) == 0) {
+        st = st / _PAGE_SIZE;
     } else {
-        maj = (AllocMajor*)result.value();
+        st = st / _PAGE_SIZE + 1;
     }
+
+    st = st < _PAGE_COUNT ? _PAGE_COUNT : st;
+
+    AllocMajor* maj = (AllocMajor*)plugs::memory_alloc(st * _PAGE_SIZE).value();
 
     maj->prev = nullptr;
     maj->next = nullptr;
     maj->pages = st;
-    maj->size = st * plugs::get_page_size();
+    maj->size = st * _PAGE_SIZE;
     maj->usage = sizeof(AllocMajor);
     maj->first = nullptr;
 

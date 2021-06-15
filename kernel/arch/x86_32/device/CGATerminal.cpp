@@ -1,8 +1,29 @@
 #include "CGATerminal.h"
 
 #include "../x86.h"
+#include "../../Arch.h"
+
+#include <kernel/memory/Memory.h>
 
 namespace hegel::arch::x86 {
+
+CGATerminal::CGATerminal(void* addr) 
+    : hegel::term::Terminal(80, 25)
+    , _vga_cells(reinterpret_cast<CGACell*>(addr))
+{
+    memory::MemoryRange cga_range = memory::MemoryRange::around_non_aligned_address((uintptr_t)addr, 80 * 25 * 2);
+    memory::map_identity(kernel_address_space(), cga_range, MEMORY_NONE);
+
+    _default_attribs = term::Attributes(false, term::Color::BLACK, term::Color::BRIGHT_GREY);
+    _current_attribs = _default_attribs;
+
+    for(int i = 0; i < _w * _h; i++) {
+        on_cell_updated(i % _w, i / _w, term::Cell(_default_attribs, U' '));
+    }
+
+    enable_cursor();
+    on_cursor_moved(term::Cursor(0, 0));
+}
 
 CGAColor terminal_color_to_cga(hegel::term::Color color)
 {

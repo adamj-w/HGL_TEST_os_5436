@@ -83,7 +83,7 @@ Error virtual_map(void* address_space, memory::MemoryRange physical_range, uintp
         auto* pt = reinterpret_cast<PageTable*>(pde.PageFrameNumber * ARCH_PAGE_SIZE);
 
         if(!pde.Present) {
-            auto error = memory::alloc_identity(&pd, MEMORY_CLEAR, (uintptr_t*)&pt);
+            auto error = memory::alloc_identity(address_space, MEMORY_CLEAR, (uintptr_t*)&pt);
             if(error != Error::SUCCEED) return error;
 
             pde.Present = 1;

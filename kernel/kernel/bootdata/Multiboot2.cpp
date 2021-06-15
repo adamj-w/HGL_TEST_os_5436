@@ -95,6 +95,16 @@ const Framebuffer* Multiboot::get_framebuffer()
     }
 }
 
+static const char* _multiboot2_memory_type_name[] = 
+{
+    "INVALID",
+    "MULTIBOOT_MEMORY_AVAILABLE",
+    "MULTIBOOT_MEMORY_RESERVED",
+    "MULTIBOOT_MEMORY_ACPI_RECLAIMABLE",
+    "MULTIBOOT_MEMORY_NVS",
+    "MULTIBOOT_MEMORY_BADRAM"
+};
+
 void multiboot2_parse_memory_map(Bootdata* bootdata, struct multiboot_tag_mmap* tag)
 {
     for(multiboot_memory_map_t* mmap = tag->entries;
@@ -136,6 +146,8 @@ void multiboot2_parse_memory_map(Bootdata* bootdata, struct multiboot_tag_mmap* 
         }
 
         bootdata->memory_map_size++;
+
+        logger_info("  - Entry type: %s, Size: %#x, Offset: 0x%#x", _multiboot2_memory_type_name[mmap->type], mmap->len, mmap->addr);
     }
 }
 

@@ -14,6 +14,9 @@
 
 namespace hegel::arch {
 
+// TODO: remove
+void temporary_graphics_init();
+
 void stop() __noreturn;
 
 void idle() __noreturn;
