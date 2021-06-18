@@ -89,7 +89,7 @@ public:
     void append(Codepoint ch);
 
     void do_ansi(Codepoint ch, const Parameter* params, int param_count);
-    virtual Error write_codepoint(Codepoint ch);
+    virtual Result write_codepoint(Codepoint ch);
 
     virtual void on_cell_updated(int x, int y, Cell c) = 0;
     virtual void on_cursor_moved(Cursor cursor) = 0;

@@ -77,11 +77,13 @@ include kernel/.build.mk
 include userspace/arch/.build.mk
 
 include userspace/libraries/.build.mk
-#include userspace/tests/.build.mk
+include userspace/tests/.build.mk
 
 include make/distro/.build.mk
 
-$(RAMDISK): $(CRTS) $(TARGETS) $(HEADERS)
+SYSROOT_CONTENT=$(shell find sysroot/ -type f)
+
+$(RAMDISK): $(CRTS) $(TARGETS) $(HEADERS) $(SYSROOT_CONTENT)
 	$(DIRECTORY_GUARD)
 
 	@echo [TAR] $@
@@ -93,6 +95,8 @@ $(RAMDISK): $(CRTS) $(TARGETS) $(HEADERS)
 		$(SYSROOT)/usr/include \
 		$(SYSROOT)/lib \
 		$(SYSROOT)/home
+
+	@cp -r sysroot/* $(SYSROOT)/
 
 	@cd $(SYSROOT); tar -cf $@ *
 

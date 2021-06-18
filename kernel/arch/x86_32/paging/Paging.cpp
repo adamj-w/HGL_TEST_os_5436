@@ -71,7 +71,7 @@ uintptr_t virtual_to_physical(void* address_space, uintptr_t vaddr)
     return (pt_entry.PageFrameNumber * ARCH_PAGE_SIZE) + (vaddr & 0xfff);
 }
 
-Error virtual_map(void* address_space, memory::MemoryRange physical_range, uintptr_t vaddr, memory::MemoryFlags flags)
+Result virtual_map(void* address_space, memory::MemoryRange physical_range, uintptr_t vaddr, memory::MemoryFlags flags)
 {
     auto& pd = *reinterpret_cast<PageDirectory*>(address_space);
 
@@ -84,7 +84,7 @@ Error virtual_map(void* address_space, memory::MemoryRange physical_range, uintp
 
         if(!pde.Present) {
             auto error = memory::alloc_identity(address_space, MEMORY_CLEAR, (uintptr_t*)&pt);
-            if(error != Error::SUCCEED) return error;
+            if(error != Result::SUCCEED) return error;
 
             pde.Present = 1;
             pde.Write = 1;
@@ -103,7 +103,7 @@ Error virtual_map(void* address_space, memory::MemoryRange physical_range, uintp
 
     paging_invalidate_tlb();
 
-    return Error::SUCCEED;
+    return Result::SUCCEED;
 }
 
 memory::MemoryRange virtual_alloc(void* address_space, memory::MemoryRange prange, memory::MemoryFlags flags)
@@ -124,7 +124,7 @@ memory::MemoryRange virtual_alloc(void* address_space, memory::MemoryRange prang
             cur_size += ARCH_PAGE_SIZE;
 
             if(cur_size == prange.size()) {
-                assert(virtual_map(address_space, prange, vaddr, flags) == Error::SUCCEED);
+                assert(virtual_map(address_space, prange, vaddr, flags) == Result::SUCCEED);
 
                 return (memory::MemoryRange){vaddr, cur_size};
             }

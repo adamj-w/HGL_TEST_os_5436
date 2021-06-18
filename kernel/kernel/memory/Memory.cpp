@@ -73,7 +73,7 @@ size_t get_total()
     return TOTAL_MEMORY;
 }
 
-Error map(void* address_space, MemoryRange virtual_range, MemoryFlags flags)
+Result map(void* address_space, MemoryRange virtual_range, MemoryFlags flags)
 {
     assert(virtual_range.is_page_aligned());
 
@@ -82,9 +82,9 @@ Error map(void* address_space, MemoryRange virtual_range, MemoryFlags flags)
 
         if(!virtual_present(address_space, vaddr)) {
             auto physical_range = physical_alloc(ARCH_PAGE_SIZE);
-            Error vmap = virtual_map(address_space, physical_range, vaddr, flags);
+            Result vmap = virtual_map(address_space, physical_range, vaddr, flags);
 
-            if(vmap != Error::SUCCEED) {
+            if(vmap != Result::SUCCEED) {
                 return vmap;
             }
         }
@@ -94,37 +94,37 @@ Error map(void* address_space, MemoryRange virtual_range, MemoryFlags flags)
         memset((void*)virtual_range.base(), 0, virtual_range.size());
     }
 
-    return Error::SUCCEED;
+    return Result::SUCCEED;
 }
 
-Error map_identity(void* address_space, MemoryRange physical_range, MemoryFlags flags)
+Result map_identity(void* address_space, MemoryRange physical_range, MemoryFlags flags)
 {
     assert(physical_range.is_page_aligned());
 
     physical_set_used(physical_range);
-    assert(virtual_map(address_space, physical_range, physical_range.base(), flags) == Error::SUCCEED);
+    assert(virtual_map(address_space, physical_range, physical_range.base(), flags) == Result::SUCCEED);
 
     if(flags & MEMORY_CLEAR) {
         memset((void*)physical_range.base(), 0, physical_range.size());
     }
 
-    return Error::SUCCEED;
+    return Result::SUCCEED;
 }
 
-ErrorOr<uintptr_t> alloc(void* address_space, size_t size, MemoryFlags flags)
+ResultOr<uintptr_t> alloc(void* address_space, size_t size, MemoryFlags flags)
 {
     assert(IS_PAGE_ALIGN(size));
 
     if(!size) {
         logger_warn("Allocation with size=0!\n");
-        return ErrorOr<uintptr_t>(Error::SUCCEED, 0);
+        return ResultOr<uintptr_t>(Result::SUCCEED, 0);
     }
 
     auto physical_range = physical_alloc(size);
 
     if(physical_range.empty()) {
         logger_error("Failed to allocate memory: Not enough physical memory!\n");
-        return Error::OUT_OF_MEMORY;
+        return Result::OUT_OF_MEMORY;
     }
 
     uintptr_t vaddr = virtual_alloc(address_space, physical_range, flags).base();
@@ -133,17 +133,17 @@ ErrorOr<uintptr_t> alloc(void* address_space, size_t size, MemoryFlags flags)
         physical_free(physical_range);
 
         logger_error("Failed to allocate memoty: Not enough virtual memory!\n");
-        return Error::OUT_OF_MEMORY;
+        return Result::OUT_OF_MEMORY;
     }
 
     if(flags & MEMORY_CLEAR) {
         memset((void*)vaddr, 0, size);
     }
 
-    return ErrorOr<uintptr_t>(vaddr);
+    return ResultOr<uintptr_t>(vaddr);
 }
 
-Error alloc_identity(void* address_space, MemoryFlags flags, uintptr_t* out_vaddr)
+Result alloc_identity(void* address_space, MemoryFlags flags, uintptr_t* out_vaddr)
 {
     for(size_t i = 1; i < 256 * 1024; i++) {
         MemoryRange identity_range{i * ARCH_PAGE_SIZE, ARCH_PAGE_SIZE};
@@ -152,7 +152,7 @@ Error alloc_identity(void* address_space, MemoryFlags flags, uintptr_t* out_vadd
             !physical_is_used(identity_range))
         {
             physical_set_used(identity_range);
-            assert(virtual_map(address_space, identity_range, identity_range.base(), flags) == Error::SUCCEED);
+            assert(virtual_map(address_space, identity_range, identity_range.base(), flags) == Result::SUCCEED);
 
             if(flags & MEMORY_CLEAR) {
                 memset((void*)identity_range.base(), 0, ARCH_PAGE_SIZE);
@@ -160,17 +160,17 @@ Error alloc_identity(void* address_space, MemoryFlags flags, uintptr_t* out_vadd
 
             *out_vaddr = identity_range.base();
 
-            return Error::SUCCEED;
+            return Result::SUCCEED;
         }
     }
 
     logger_error("Failed to allocate identity mapped page!\n");
 
     *out_vaddr = 0;
-    return Error::OUT_OF_MEMORY;
+    return Result::OUT_OF_MEMORY;
 }
 
-Error free(void* address_space, MemoryRange vrange)
+Result free(void* address_space, MemoryRange vrange)
 {
     assert(vrange.is_page_aligned());
     assert(vrange.size() > 0);
@@ -187,7 +187,7 @@ Error free(void* address_space, MemoryRange vrange)
         }
     }
 
-    return Error::SUCCEED;
+    return Result::SUCCEED;
 }
 
 }

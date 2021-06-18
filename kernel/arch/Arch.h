@@ -39,7 +39,7 @@ bool virtual_present(void* address_space, uintptr_t virtual_address);
 
 uintptr_t virtual_to_physical(void* address_space, uintptr_t virtual_address);
 
-Error virtual_map(void* address_space, memory::MemoryRange physical_range, uintptr_t virtual_address, memory::MemoryFlags flags);
+Result virtual_map(void* address_space, memory::MemoryRange physical_range, uintptr_t virtual_address, memory::MemoryFlags flags);
 
 memory::MemoryRange virtual_alloc(void* address_space, memory::MemoryRange physical_range, memory::MemoryFlags flags);
 void virtual_free(void* address_space, memory::MemoryRange physical_range);

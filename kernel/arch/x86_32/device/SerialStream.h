@@ -49,13 +49,13 @@ public:
         return true; 
     }
 
-    virtual Error write_byte(byte byte) override
+    virtual Result write_byte(byte byte) override
     {
         wait_write();
 
         out8(static_cast<uint16_t>(_port), byte);
 
-        return Error::SUCCEED;
+        return Result::SUCCEED;
     }
 };
 

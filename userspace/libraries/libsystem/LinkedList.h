@@ -58,7 +58,7 @@ public:
     }
 
     template<typename Callback>
-    void foreach(Callback callback)
+    Iteration foreach(Callback callback)
     {
         LinkedListItem<T>* current = _head;
 
@@ -68,8 +68,10 @@ public:
             if(callback(current->value) != Iteration::STOP) {
                 current = next;
             } else 
-                return;
+                return Iteration::STOP;
         }
+
+        return Iteration::CONTINUE;
     }
 
     template <typename Comparator>

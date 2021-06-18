@@ -28,7 +28,7 @@ ErrorOrSizeT Stream::read(void* buffer, size_t size)
     for(readed = 0; readed < size; readed++) {
         auto result = read_byte();
 
-        if(result != Error::SUCCEED) {
+        if(result != Result::SUCCEED) {
             return ErrorOrSizeT(result.error(), readed);
         } else {
             ((byte*)buffer)[readed] = result.value();
@@ -45,7 +45,7 @@ ErrorOrSizeT Stream::write(const void* buffer, size_t size)
     for(written = 0; written < size; written++) {
         auto result = write_byte(((byte*)buffer)[written]);
 
-        if(result != Error::SUCCEED) {
+        if(result != Result::SUCCEED) {
             return ErrorOrSizeT(result, written);
         }
     }
@@ -53,16 +53,16 @@ ErrorOrSizeT Stream::write(const void* buffer, size_t size)
     return ErrorOrSizeT(written);
 }
 
-ErrorOr<byte> Stream::read_byte()
+ResultOr<byte> Stream::read_byte()
 {
-    return ErrorOr<byte>(Error::NOT_IMPLEMENTED);
+    return ResultOr<byte>(Result::NOT_IMPLEMENTED);
 }
 
-Error Stream::write_byte(byte byte)
+Result Stream::write_byte(byte byte)
 {
     __unused(byte);
 
-    return Error::NOT_IMPLEMENTED;
+    return Result::NOT_IMPLEMENTED;
 }
 
 ErrorOrSizeT Stream::seek(Stream::Offset offset, SeekOrigin origin)
@@ -70,12 +70,12 @@ ErrorOrSizeT Stream::seek(Stream::Offset offset, SeekOrigin origin)
     __unused(offset);
     __unused(origin);
 
-    return ErrorOrSizeT(Error::NOT_IMPLEMENTED);
+    return ErrorOrSizeT(Result::NOT_IMPLEMENTED);
 }
 
 ErrorOrSizeT Stream::tell()
 {
-    return ErrorOrSizeT(Error::NOT_IMPLEMENTED);
+    return ErrorOrSizeT(Result::NOT_IMPLEMENTED);
 }
 
 void Stream::flush() {}

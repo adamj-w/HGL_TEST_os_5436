@@ -54,7 +54,7 @@ private:
     int _width_decoding = 0;
 
 public: 
-    virtual Error write_byte(uint8_t byte)
+    virtual Result write_byte(uint8_t byte)
     {
         if (!_is_decoding)
         {
@@ -107,10 +107,10 @@ public:
             return write_codepoint(Codepoint(_current_decoding));
         }
 
-        return Error::SUCCEED;
+        return Result::SUCCEED;
     }
 
-    virtual Error write_codepoint(Codepoint ch) = 0;
+    virtual Result write_codepoint(Codepoint ch) = 0;
 };
 
 }

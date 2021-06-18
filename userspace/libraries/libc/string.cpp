@@ -1,4 +1,4 @@
-#include <libc/string.h>
+#include <string.h>
 
 #include <stdint.h>
 
@@ -56,6 +56,18 @@ int strcmp(const char* s1, const char* s2)
 	return s1[0] - s2[0];
 }
 
+int strncmp(const char* s1, const char* s2, size_t n)
+{
+	size_t i = 0;
+
+	while((s1[i] && s2[i]) && s1[i] == s2[i]) {
+		i++;
+		if(i >= n) break;
+	}
+
+	return s1[i] - s2[i];
+}
+
 size_t strlen(const char* str)
 {
     size_t len = 0;
@@ -79,6 +91,32 @@ void strnapd(char* str, char c, size_t n)
 			return;
 		}
 	}
+}
+
+char* strcat(char* s1, const char* s2)
+{
+	size_t dest_len = strlen(s1);
+	size_t i;
+
+	for (i = 0; s2[i] != '\0'; i++) {
+		s1[dest_len + i] = s2[i];
+	}
+
+	s1[dest_len + i] = '\0';
+	return s1;
+}
+
+char* strncat(char* s1, const char* s2, size_t n)
+{
+	size_t dest_len = strlen(s1);
+	size_t i;
+
+	for (i = 0 ; i < n && s2[i] != '\0' ; i++) {
+		s1[dest_len + i] = s2[i];
+	}
+
+	s1[dest_len + i] = '\0';
+	return s1;
 }
 
 void strrvs(char* str)

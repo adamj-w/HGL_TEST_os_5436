@@ -4,29 +4,29 @@
 #include <stddef.h>
 
 template<typename T>
-class ErrorOr
+class ResultOr
 {
 protected:
-    Error _error;
+    Result _error;
     T _value;
 
 public:
-    bool succeed() { return _error == Error::SUCCEED; }
+    bool succeed() { return _error == Result::SUCCEED; }
     T value() { return _value; }
-    Error error() { return _error; }
+    Result error() { return _error; }
 
-    ErrorOr(Error error) : _error(error), _value() {}
-    ErrorOr(T value) : _error(Error::SUCCEED), _value(value) {}
-    ErrorOr(Error error, T value) : _error(error), _value(value) {}
+    ResultOr(Result error) : _error(error), _value() {}
+    ResultOr(T value) : _error(Result::SUCCEED), _value(value) {}
+    ResultOr(Result error, T value) : _error(error), _value(value) {}
 
     template<typename U>
-    ErrorOr(ErrorOr<U> error, T value) : _error(error.error()), _value(value) {}
+    ResultOr(ResultOr<U> error, T value) : _error(error.error()), _value(value) {}
 
-    bool operator==(Error err) {
+    bool operator==(Result err) {
         return _error == err;
     }
 
-    bool operator!=(Error err) {
+    bool operator!=(Result err) {
         return _error != err;
     }
 
@@ -39,15 +39,15 @@ public:
     }
 };
 
-class ErrorOrSizeT : public ErrorOr<size_t>
+class ErrorOrSizeT : public ResultOr<size_t>
 {
 public:
     size_t unwrap() { return succeed() ? _value : -1; }
 
-    ErrorOrSizeT(Error error) : ErrorOr(error) {}
-    ErrorOrSizeT(size_t value) : ErrorOr(value) {}
-    ErrorOrSizeT(Error error, size_t value) : ErrorOr(error, value) {}
+    ErrorOrSizeT(Result error) : ResultOr(error) {}
+    ErrorOrSizeT(size_t value) : ResultOr(value) {}
+    ErrorOrSizeT(Result error, size_t value) : ResultOr(error, value) {}
 
     template<typename U>
-    ErrorOrSizeT(ErrorOr<U> error, size_t value) : ErrorOr(error, value) {}
+    ErrorOrSizeT(ResultOr<U> error, size_t value) : ResultOr(error, value) {}
 };

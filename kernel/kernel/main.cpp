@@ -1,6 +1,7 @@
 #include "system/System.h"
 #include "memory/Memory.h"
 #include "modules/Modules.h"
+#include "fs/fs.h"
 
 #include <arch/Arch.h>
 
@@ -20,7 +21,18 @@ void system_main(const boot::Bootdata* bootdata)
     printf("================================================================================\n");
     printf("~ \e[94mh\e[m ");
     
+    fs::initialize_filesystem();
+
     modules::modules_initialize(bootdata);
+
+    auto fileE = fs::get_file(nullptr, "/test.txt");
+    assert(fileE.succeed());
+
+    char buffer[31];
+    fileE.value()->read(fileE.value(), 0, buffer, 30);
+    buffer[30] = '\0';
+
+    logger_info("Read test.txt with text \"%s\"", buffer);
 }
 
 }

@@ -42,7 +42,7 @@ void memory_unlock()
     _memory_lock.release();
 }
 
-ErrorOr<uintptr_t> memory_alloc(size_t size)
+ResultOr<uintptr_t> memory_alloc(size_t size)
 {
     return memory::alloc(arch::kernel_address_space(), size, MEMORY_CLEAR);
 }

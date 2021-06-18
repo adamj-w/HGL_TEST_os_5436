@@ -6,12 +6,6 @@
 
 namespace modules {
 
-static void ramdisk_load(const boot::Module& mod) 
-{
-    __unused(mod);
-    logger_debug("Got here");
-}
-
 typedef void (*ModuleHandlerFunc)(const boot::Module& mod);
 
 struct ModuleHandler {
@@ -21,7 +15,7 @@ struct ModuleHandler {
 
 static ModuleHandler _handlers[] = 
 {
-    {.name="ramdisk", .handler=ramdisk_load},
+    {.name="ramdisk", .handler=ramdisk_init},
     {0, 0}
 };
 

@@ -27,8 +27,8 @@ public:
 
     virtual ErrorOrSizeT read(void* buffer, size_t size);
     virtual ErrorOrSizeT write(const void* buffer, size_t size);
-    virtual ErrorOr<byte> read_byte();
-    virtual Error write_byte(byte byte);
+    virtual ResultOr<byte> read_byte();
+    virtual Result write_byte(byte byte);
     virtual ErrorOrSizeT seek(Stream::Offset offset, SeekOrigin origin);
     virtual ErrorOrSizeT tell();
 

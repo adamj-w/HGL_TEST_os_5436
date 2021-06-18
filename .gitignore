@@ -1,4 +1,6 @@
 build/
+ports/*
 .vscode
 peda-session-*
 .gdb_history
+kernel/kernel/ignore/

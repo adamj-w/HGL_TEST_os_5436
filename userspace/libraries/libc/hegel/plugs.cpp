@@ -5,13 +5,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-namespace hegel {
+namespace hegel::plugs {
 
-Stream* stdin;
-Stream* stdout;
-Stream* stderr;
-
-namespace plugs {
+Stream* in_stream;
+Stream* out_stream;
+Stream* err_stream;
 
 SpinLock _memory_lock;
 
@@ -36,11 +34,11 @@ size_t get_page_size()
     return 1024;
 }
 
-ErrorOr<uintptr_t> memory_alloc(size_t page_count)
+ResultOr<uintptr_t> memory_alloc(size_t page_count)
 {
     __unused(page_count);
     // TODO: work on after paging
-    return ErrorOr<uintptr_t>(Error::NOT_IMPLEMENTED);
+    return ResultOr<uintptr_t>(Result::NOT_IMPLEMENTED);
 }
 
 void memory_free(uintptr_t addr, size_t page_count)
@@ -62,6 +60,4 @@ extern "C" void __assert_not_reach_reached(const char* file, int line)
 {
     printf("Assertion reached at %s:%d\n!", file, line);
     exit(-1);
-}
-
 }

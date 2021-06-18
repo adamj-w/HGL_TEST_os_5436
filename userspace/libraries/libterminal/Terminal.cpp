@@ -272,7 +272,7 @@ void Terminal::do_ansi(Codepoint ch, const Parameter* params, int param_count)
     }
 }
 
-Error Terminal::write_codepoint(Codepoint ch)
+Result Terminal::write_codepoint(Codepoint ch)
 {
     switch(_state) {
     case ParserState::WAIT_FOR_ESC:
@@ -320,7 +320,7 @@ Error Terminal::write_codepoint(Codepoint ch)
         break;
     }
 
-    return Error::SUCCEED;
+    return Result::SUCCEED;
 }
 
 }
