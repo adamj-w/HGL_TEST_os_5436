@@ -7,8 +7,8 @@ KERNEL_SOURCES += \
 	$(wildcard kernel/arch/$(CONFIG_ARCH)/*/*.cpp) \
 
 KERNEL_ASSEMBLY_SOURCES += \
-	$(wildcard kernel/arch/$(CONFIG_ARCH)/*.s) \
-	$(wildcard kernel/arch/$(CONFIG_ARCH)/*/*.s) \
+	$(wildcard kernel/arch/$(CONFIG_ARCH)/*.asm) \
+	$(wildcard kernel/arch/$(CONFIG_ARCH)/*/*.asm) \
 
 KERNEL_LIBRARIES_SOURCES = \
 	$(wildcard userspace/libraries/libterminal/*.cpp) \
@@ -21,7 +21,7 @@ KERNEL_BINARY = $(BUILDROOT)/kernel.bin
 
 KERNEL_OBJECTS = \
 	$(patsubst %.cpp, $(BUILDROOT)/%.cpp.o, $(KERNEL_SOURCES)) \
-	$(patsubst %.s, $(BUILDROOT)/%.s.o, $(KERNEL_ASSEMBLY_SOURCES)) \
+	$(patsubst %.asm, $(BUILDROOT)/%.asm.o, $(KERNEL_ASSEMBLY_SOURCES)) \
 	$(patsubst userspace/libraries/%.cpp, $(BUILDROOT)/kernel/%.cpp.o, $(KERNEL_LIBRARIES_SOURCES))
 
 KERNEL_CXXFLAGS += \
@@ -44,7 +44,7 @@ $(BUILDROOT)/kernel/%.cpp.o: userspace/libraries/%.cpp
 	@echo [KERNEL] [CXX] $<
 	@$(CXX) $(KERNEL_CXXFLAGS) -c -o $@ $<
 
-$(BUILDROOT)/kernel/%.s.o: kernel/%.s
+$(BUILDROOT)/kernel/%.asm.o: kernel/%.asm
 	$(DIRECTORY_GUARD)
 	@echo [KERNEL] [AS] $<
 	@$(AS) $(ASFLAGS) -o $@ $<

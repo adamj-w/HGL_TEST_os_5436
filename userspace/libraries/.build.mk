@@ -6,7 +6,7 @@ $(1)_ARCHIVE ?= $(BUILD_DIRECTORY_LIBS)/lib$($(1)_NAME).a
 $(1)_SOURCES += \
 	$$(wildcard userspace/libraries/lib$($(1)_NAME)/*.cpp) \
 	$$(wildcard userspace/libraries/lib$($(1)_NAME)/*/*.cpp) \
-	$$(wildcard userspace/libraries/lib$($(1)_NAME)/*.s)
+	$$(wildcard userspace/libraries/lib$($(1)_NAME)/*.asm)
 
 $(1)_OBJECTS = $$(patsubst userspace/libraries/%, $(BUILDROOT)/userspace/libraries/%.o, $$($(1)_SOURCES))
 
@@ -33,7 +33,7 @@ $(BUILDROOT)/userspace/libraries/lib$($(1)_NAME)/%.cpp.o: userspace/libraries/li
 	@echo [LIB$(1)] [CXX] $$<
 	@$(CXX) $(CXXFLAGS) $($(1)_CXXFLAGS) -c -o $$@ $$<
 
-$(BUILDROOT)/userspace/libraries/lib$($(1)_NAME)/%.s.o: userspace/libraries/lib$($(1)_NAME)/%.s
+$(BUILDROOT)/userspace/libraries/lib$($(1)_NAME)/%.asm.o: userspace/libraries/lib$($(1)_NAME)/%.asm
 	$$(DIRECTORY_GUARD)
 	@echo [LIB$(1)] [AS] $$<
 	@$(AS) $(ASFLAGS) $($(1)_ASFLAGS) -o $$@ $$<
