@@ -7,7 +7,11 @@
 
 namespace hegel {
 
+typedef void (*panic_dump_callback_t)(void* userdata);
+
 void PANIC(const char* message, ...) __noreturn;
+void register_panic_dump_callback(panic_dump_callback_t func, void* userdata);
+
 void system_tick();
 uint64_t get_tick();
 

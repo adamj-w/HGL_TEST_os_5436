@@ -51,5 +51,6 @@ static inline void hlt(void) { asm volatile("hlt"); }
 
 extern "C" void load_gdt(uint32_t gdt);
 extern "C" void load_idt(uint32_t idt);
+extern "C" void store_gdt(void* addr);
 
 }

@@ -58,12 +58,12 @@ struct __packed GDTEntry
     uint16_t limit0_15;
     uint16_t base0_15;
     uint8_t base16_23;
-    uint8_t acces;
+    uint8_t access;
     uint8_t limit16_19 : 4;
     uint8_t flags : 4;
     uint8_t base24_31;
 
-    static GDTEntry create(uint32_t base, uint32_t limit, uint8_t acces, uint8_t flags)
+    static GDTEntry create(uint32_t base, uint32_t limit, uint8_t access, uint8_t flags)
     {
         GDTEntry entry;
 
@@ -72,10 +72,23 @@ struct __packed GDTEntry
         entry.base24_31 = (base >> 24) & 0xff;
         entry.limit0_15 = limit & 0xffff;
         entry.limit16_19 = (limit >> 16) & 0x0f;
-        entry.acces = (acces);
+        entry.access = (access);
         entry.flags = (flags);
 
         return entry;
+    }
+
+    uint32_t base() const {
+        uint32_t result = (base24_31 & 0xff) << 24;
+        result += (base16_23 & 0xff) << 16;
+        result += (base0_15 & 0xffff) << 0;
+        return result;
+    }
+
+    uint32_t limit() const {
+        uint32_t result = (limit16_19 & 0x0f) << 16;
+        result += (limit0_15 & 0xffff) << 0;
+        return result;
     }
 };
 

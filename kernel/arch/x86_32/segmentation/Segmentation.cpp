@@ -3,6 +3,8 @@
 
 #include <libsystem/Logger.h>
 
+#include <kernel/system/System.h>
+
 namespace hegel::arch::x86 {
 
 TSS gdt_tss;
@@ -10,6 +12,22 @@ TSS gdt_tss;
 GDTEntry gdt_entries[GDT_ENTRY_COUNT] = {};
 
 GDTDesc gdt_descriptor = {};
+
+static void segmentation_panic_dump(void*)
+{
+    GDTDesc desc = {};
+    store_gdt(&desc);
+    size_t entry_count = desc.size / sizeof(GDTEntry);
+    GDTEntry* entries = (GDTEntry*)desc.offset;
+
+    printf("- x86 Segmentation Info\n");
+
+    // TODO: better printing for flags
+    for(size_t i = 0; i < entry_count; ++i) {
+        printf("\t[%02u] - at %#010X - %#010X\n", i, entries[i].base(), entries[i].base() + entries[i].limit());
+        printf("\t     - Access: %08b Flags: %08b\n", entries[i].access, entries[i].flags);
+    }
+}
 
 void segmentation_initialize()
 {
@@ -39,6 +57,8 @@ void segmentation_initialize()
 
     logger_info("Loading the GDT.");
     x86::load_gdt((uint32_t)&gdt_descriptor);
+
+    hegel::register_panic_dump_callback(segmentation_panic_dump, nullptr);
 
     logger_info("Successfully loaded GDT.");
 }

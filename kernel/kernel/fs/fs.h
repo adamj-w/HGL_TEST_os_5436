@@ -52,4 +52,7 @@ directory* root_dir();
 ResultOr<directory*> get_directory(directory* relative, const char* path);
 ResultOr<file*> get_file(directory* relative, const char* path);
 
+Result directory_create(directory* relative, const char* path, int flags);
+Result file_create(directory* relative, const char* path, int flags);
+
 }

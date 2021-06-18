@@ -1,7 +1,5 @@
 #pragma once
 
-namespace hegel {
-
 template<typename T>
 T&& move(T& arg) {
     return static_cast<T&&>(arg);
@@ -24,6 +22,4 @@ template<class T>
 constexpr T&& forward(typename Identity<T>::Type& param)
 {
     return static_cast<T&&>(param);
-}
-
 }

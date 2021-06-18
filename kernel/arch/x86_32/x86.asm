@@ -19,3 +19,9 @@ load_idt:
     mov eax, [esp + 4]
     lidt [eax]
     ret
+
+global store_gdt
+store_gdt:
+    mov eax, [esp + 4]
+    sgdt [eax]
+    ret

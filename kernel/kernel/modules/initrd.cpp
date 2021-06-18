@@ -23,10 +23,10 @@ void ramdisk_init(const boot::Module& mod)
     {
         auto* block = blockE.value();
         if(block->name[strlen(block->name) - 1] == '/') {
-            //fs::directory_create(nullptr, block->name, 0);
+            fs::directory_create(nullptr, block->name, 0);
         } else {
-            logger_debug("Found file with name \"%s\" at %#010X", block->name, block->data);
-            //fs::file_create(nullptr, block->name, 0);
+            //logger_debug("Found file with name \"%s\" at %#010X", block->name, block->data);
+            fs::file_create(nullptr, block->name, 0);
         }
     }
 
