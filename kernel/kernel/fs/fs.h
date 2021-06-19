@@ -13,7 +13,7 @@ namespace fs {
 struct file;
 struct directory;
 
-typedef int (*file_open_t)(struct file* file);
+typedef Result (*file_open_t)(struct file* file);
 typedef void (*file_close_t)(struct file* file);
 typedef void (*file_write_t)(struct file* file, uint32_t off, const void* buffer, size_t n);
 typedef void (*file_read_t)(struct file* file, uint32_t off, void* buffer, size_t n);
@@ -32,6 +32,13 @@ struct directory {
     struct directory* parent;
 };
 
+struct file_ops {
+    file_open_t open;
+    file_close_t close;
+    file_read_t read;
+    file_write_t write;
+};
+
 struct file {
     dev_t device;
     uint32_t inode; // TODO: upgrade inode
@@ -39,10 +46,9 @@ struct file {
     char name[PATH_FILE_NAME_SIZE];
     struct directory* parent;
 
-    file_open_t open;
-    file_close_t close;
-    file_read_t read;
-    file_write_t write;
+    struct file_ops ops;
+
+    uint32_t data;
 };
 
 void initialize_filesystem();
@@ -53,6 +59,7 @@ ResultOr<directory*> get_directory(directory* relative, const char* path);
 ResultOr<file*> get_file(directory* relative, const char* path);
 
 Result directory_create(directory* relative, const char* path, int flags);
-Result file_create(directory* relative, const char* path, int flags);
+// TODO: remove ops param and set to find last mounted directories file_ops
+Result file_create(directory* relative, const char* path, void* data, int flags, file_ops& ops);
 
 }

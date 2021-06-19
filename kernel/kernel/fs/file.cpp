@@ -15,7 +15,7 @@ file* alloc_file(const char* name)
     return f;
 }
 
-Result file_create(directory* relative, const char* path, int flags)
+Result file_create(directory* relative, const char* path, void* data, int flags, file_ops& ops)
 {
     __unused(flags); // TODO: add flag support
 
@@ -29,6 +29,9 @@ Result file_create(directory* relative, const char* path, int flags)
     if(!parentE.succeed()) return Result::OUT_OF_MEMORY;
     f = alloc_file(file_name);
     f->parent = parentE.value();
+    f->ops = move(ops);
+    f->data = (uint32_t)data;
+    // TODO: make sure file doesn't already exist
     parentE.value()->files.push(f);
 
     delete[] dir_path;

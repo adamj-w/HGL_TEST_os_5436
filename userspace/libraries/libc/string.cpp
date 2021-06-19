@@ -75,6 +75,15 @@ size_t strlen(const char* str)
     return len;
 }
 
+size_t strnlen(const char* str, size_t n)
+{
+	size_t len = 0;
+	for(; len < n; len++, str++) {
+		if(!(*str)) break;
+	}
+	return len;
+}
+
 void strapd(char* str, char c)
 {
     size_t len = strlen(str);
@@ -130,10 +139,8 @@ void strrvs(char* str)
 
 char* strncpy(char* dst, const char* src, size_t n)
 {
-	size_t i = 0;
-	while(src[i] && i <= n) {
-		dst[i] = src[i];
-		i++;
-	}
-	return dst;
+	size_t size = strnlen(src, n);
+	if(size != n) 
+		memset(dst + size, '\0', n - size);
+	return (char*)memcpy(dst, src, size);
 }

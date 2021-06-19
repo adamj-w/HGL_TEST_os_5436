@@ -2,10 +2,12 @@
 #include "memory/Memory.h"
 #include "modules/Modules.h"
 #include "fs/fs.h"
+#include "fs/path.h"
 
 #include <arch/Arch.h>
 
 #include <stdio.h>
+#include <string.h>
 #include <libsystem/Logger.h>
 
 namespace hegel {
@@ -27,10 +29,13 @@ void system_main(const boot::Bootdata* bootdata)
 
     auto fileE = fs::get_file(nullptr, "/test.txt");
     assert(fileE.succeed());
+    auto* file = fileE.value();
 
-    char buffer[31];
-    fileE.value()->read(fileE.value(), 0, buffer, 30);
-    buffer[30] = '\0';
+    file->ops.open(file);
+
+    char buffer[51];
+    memset(buffer, '\0', 51);
+    file->ops.read(file, 0, buffer, 50);
 
     logger_info("Read test.txt with text \"%s\"", buffer);
 }
