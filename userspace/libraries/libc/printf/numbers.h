@@ -16,3 +16,4 @@ struct NumberFormatter
 
 size_t format_uint(NumberFormatter format, unsigned long value, char* str, size_t size);
 size_t format_int(NumberFormatter format, long value, char* str, size_t size);
+size_t format_float(NumberFormatter format, double value, char* str, size_t size);

@@ -61,6 +61,9 @@ _start:
     push ebx
     push eax
 
+    extern fpu_initialize
+    call fpu_initialize
+
     extern arch_main
     call arch_main
 

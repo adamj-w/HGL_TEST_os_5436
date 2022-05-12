@@ -3,6 +3,7 @@
 #include "device/PIT.h"
 #include "segmentation/Segmentation.h"
 #include "interrupts/Interrupts.h"
+#include "interrupts/PIC.h"
 #include "acpi/ACPI.h"
 #include "smbios/SMBIOS.h"
 #include "CPUID.h"
@@ -49,6 +50,9 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
 
     segmentation_initialize();
     interrupts_initialize();
+    pic_initialize();
+
+    logger_debug("testing if sse works %.2f + %.2f = %.2f", 50., 65.346, 50. + 65.346);
 
     acpi::initialize(bootdata);
     smbios::initialize({0xF0000, 0xFFFF});

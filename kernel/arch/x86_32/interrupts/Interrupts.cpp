@@ -56,10 +56,9 @@ extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFr
     }
 
     if(stackFrame.intno == 32) {
+        //logger_debug("tick");
         hegel::system_tick();
     }
-
-    //logger_info("Executing intno: {}", stackFrame.intno);
 
     pic_ack(stackFrame.intno);
 

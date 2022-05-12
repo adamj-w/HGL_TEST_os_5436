@@ -81,4 +81,8 @@ void pic_disable()
     out8(PIC2_DATA, 0xff);
 }
 
+void pic_initialize() {
+    pic_remap(PIC1_OFFSET, PIC2_OFFSET);
+}
+
 }

@@ -8,4 +8,6 @@ void pic_ack(int intno);
 
 void pic_disable();
 
+void pic_initialize();
+
 }

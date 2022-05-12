@@ -5,6 +5,13 @@
 
 __BEGIN_HEADER
 
+double exp(double x);
+double exp2(double x);
+double exp10(double x);
+
+double log(double x);
+
+double pow(double x, double y);
 long long int llpow(long long x, long long y);
 unsigned long long int ullpow(unsigned long long x, long long y);
 

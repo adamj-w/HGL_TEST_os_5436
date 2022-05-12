@@ -50,18 +50,17 @@ BUILD_DEFINES := \
 CFLAGS= \
 	-std=c11 \
 	-MD \
-	-mno-sse \
 	--sysroot=$(SYSROOT) \
 	$(CONFIG_OPTIMIZATIONS) \
 	$(BUILD_WARNING) \
 	$(BUILD_INCLUDE) \
 	$(BUILD_DEFINES) \
 	$(BUILD_CONFIGS)
+	# -mno-sse 
 
 CXXFLAGS= \
 	-std=c++17 \
 	-MD \
-	-mno-sse \
 	-fno-exceptions \
 	--sysroot=$(SYSROOT) \
 	$(CONFIG_OPTIMIZATIONS) \
@@ -70,6 +69,7 @@ CXXFLAGS= \
 	$(BUILD_INCLUDE) \
 	$(BUILD_DEFINES) \
 	$(BUILD_CONFIGS)
+	# -mno-sse
 
 include make/toolchain/$(CONFIG_ARCH)-$(CONFIG_TOOLCHAIN).mk
 

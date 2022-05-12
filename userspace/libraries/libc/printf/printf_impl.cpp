@@ -138,6 +138,22 @@ int __printf_format_hexadecimal(printf_info_t* info, va_list* va)
     return info->written;
 }
 
+int __printf_format_float(printf_info_t* info, va_list* va) 
+{
+    const double v = va_arg(*va, double);
+    char buffer[65] = {};
+
+    NumberFormatter format = FORMAT_DECIMAL;
+    format.after_point = info->length;
+
+    format_float(format, v, buffer, 65);
+    for(size_t i = 0; buffer[i]; i++) {
+        PRINTF_APPEND(buffer[i]);
+    }
+
+    return info->written;
+}
+
 int __printf_format_string(printf_info_t* info, va_list* va)
 {
     const char* v = va_arg(*va, char*);
@@ -165,6 +181,8 @@ static printf_formatter_t formatters[] = {
     { 'u', __printf_format_unsigned_decimal },
     { 'x', __printf_format_hexadecimal },
     { 'X', __printf_format_hexadecimal },
+
+    { 'f', __printf_format_float },
 
     { 's', __printf_format_string },
 
@@ -232,6 +250,9 @@ int __printf(printf_info_t* info, va_list va)
                 PRINTF_PEEK();
             } else if(info->c == '-') {
                 info->align = PFALIGN_LEFT;
+                PRINTF_PEEK();
+            } else if (info->c == '.') { 
+                info->state = PFSTATE_FORMAT_LENGTH;
                 PRINTF_PEEK();
             } else if(isdigit(info->c)) {
                 info->state = PFSTATE_FORMAT_LENGTH;

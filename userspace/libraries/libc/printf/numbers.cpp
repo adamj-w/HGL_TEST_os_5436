@@ -1,6 +1,8 @@
 #include "numbers.h"
+#include <libsystem/Macros.h>
 
 #include <string.h>
+#include <math.h>
 
 static const char* digits = "0123456789abcdefghijklmnopqrstuvwxyz";
 static const char* capital_digits = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -50,4 +52,24 @@ size_t format_int(NumberFormatter format, long value, char* str, size_t size)
     }
 
     return written + format_uint(format, value, str, size);
+}
+
+size_t format_float(NumberFormatter format, double value, char* str, size_t size) 
+{
+    int ipart = (int)value;
+
+    float fpart = value - (float)ipart;
+
+    size_t written = format_int(format, ipart, str, size);
+
+    if(format.after_point != 0) {
+        strnapd(str, '.', size);
+        written++;
+
+        fpart = fpart * pow(format.base, format.after_point);
+
+        format_int(format, (int)fpart, str + written, size - written);
+    }
+
+    return written;
 }
