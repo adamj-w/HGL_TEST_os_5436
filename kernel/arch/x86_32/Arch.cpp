@@ -14,6 +14,9 @@ extern int __kernel_end;
 
 namespace hegel::arch {
 
+void disable_interrupts() { x86::cli(); }
+void enable_interrupts() { x86::sti(); }
+
 void temporary_graphics_init()
 {
     RefPtr<CGATerminal> terminal = make<CGATerminal>((void*)0xb8000);

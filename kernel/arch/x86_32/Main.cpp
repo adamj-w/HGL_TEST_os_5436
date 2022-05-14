@@ -7,6 +7,7 @@
 #include "acpi/ACPI.h"
 #include "smbios/SMBIOS.h"
 #include "CPUID.h"
+#include "x86.h"
 
 #include <kernel/system/System.h>
 #include <kernel/bootdata/Multiboot2.h>
@@ -16,6 +17,7 @@
 #include <libsystem/__plugs__.h>
 #include <libsystem/Logger.h>
 #include <libsystem/RefPtr.h>
+#include <hegel/extras.h>
 
 #include <arch/Arch.h>
 
@@ -28,6 +30,9 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
 {
     auto serial = SerialStream(SerialPort::COM1);
     __plug_init_libsystem(&serial);
+
+    // Print malloc info for kernel (boolean indicates whether to print extra info)
+    register_panic_dump_callback(liballoc_dump, (void*)false);
 
     if(!cpuid_supported()) logger_fatal("System doesn't support CPUID.");
     cpuid_check_system_requirements();
@@ -52,8 +57,8 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
     interrupts_initialize();
     pic_initialize();
 
-    logger_debug("testing if sse works %.2f + %.2f = %.2f", 50., 65.346, 50. + 65.346);
-
+    //logger_debug("testing if sse works %.2f + %.2f = %.2f", 50., 65.346, 50. + 65.346);
+    
     acpi::initialize(bootdata);
     smbios::initialize({0xF0000, 0xFFFF});
 

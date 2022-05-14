@@ -14,6 +14,9 @@
 
 namespace hegel::arch {
 
+void disable_interrupts();
+void enable_interrupts();
+
 // TODO: remove
 void temporary_graphics_init();
 
@@ -34,6 +37,8 @@ void* kernel_address_space();
 void virtual_initialize();
 
 void virtual_memory_enable();
+
+struct AddressSpace;
 
 bool virtual_present(void* address_space, uintptr_t virtual_address);
 

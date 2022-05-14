@@ -10,6 +10,8 @@
 #include <string.h>
 #include <libsystem/Logger.h>
 
+#include "kernel/interrupts/Interrupts.h"
+
 namespace hegel {
 
 void system_main(const boot::Bootdata* bootdata)
@@ -22,6 +24,8 @@ void system_main(const boot::Bootdata* bootdata)
     printf("Codename: \e[31mMarshmallow\e[m built on (\"%s\")\n", __BUILD_UNAME__);
     printf("================================================================================\n");
     printf("~ \e[94mh\e[m ");
+
+    interrupts::interrupts_initialize();
     
     fs::initialize_filesystem();
 
@@ -38,6 +42,8 @@ void system_main(const boot::Bootdata* bootdata)
     file->ops.read(file, 0, buffer, 50);
 
     logger_info("Read test.txt with text \"%s\"", buffer);
+
+    PANIC("Reached end of implementation. Please wait for kernel to be completed.\n");
 }
 
 }

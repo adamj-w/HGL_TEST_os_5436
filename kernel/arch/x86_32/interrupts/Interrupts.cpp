@@ -1,9 +1,11 @@
 #include "Interrupts.h"
 #include "PIC.h"
 #include "../x86.h"
+#include "../segmentation/Segmentation.h"
 
 #include <libsystem/Logger.h>
 #include <kernel/system/System.h>
+#include <kernel/interrupts/Interrupts.h>
 
 #include "arch/Arch.h"
 
@@ -35,8 +37,6 @@ void interrupts_initialize()
 
     logger_info("Loading the IDT.");
     x86::load_idt((uint32_t)&idt_descriptor);
-    sti();
-    logger_info("Interrupts should be working.");
 }
 
 static const char* __cpu_exception_string[] = {
@@ -44,20 +44,53 @@ static const char* __cpu_exception_string[] = {
     "Invalid Opcode", "Device Not Available (FPU)", "Double Fault", "CoProcessor Segment Overrun (FPU)",
     "Invalid TSS", "Segment Not Present", "Stack Segment Fault", "General Protection", "Page Fault",
     "Reserved", "FPU Error", "Alignment Check", "Machine Check", "SIMD FPU error", "Virtualization Exception",
-    "Control Protection Exception"
+    "Control Protection Exception", "Reserved", "Reserved", "Reserved", "Reserved", "Reserved", "Reserved", 
+    "Reserved", "Reserved", "Reserved", "Reserved"
 };
 
 extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFrame)
 {
-    if(stackFrame.intno <= 21) {
-        logger_error("CPU exception in process %d: %s (IRQ%d)!", 
-            0, //scheduling::running_process()->id(),
-            __cpu_exception_string[stackFrame.intno], stackFrame.intno);
-    }
+    ASSERT_INTERRUPTS_NOT_RETAINED(); // no manual calling
 
-    if(stackFrame.intno == 32) {
-        //logger_debug("tick");
-        hegel::system_tick();
+    // TODO: optimize control block placement
+    if(stackFrame.intno < 32) {
+        if(stackFrame.cs == HEGEL_PROCESS_CODE_SEG) {
+            logger_error("CPU exception in process %d: %s (IRQ%d)!", 
+                0, //scheduling::running_process()->id(),
+                __cpu_exception_string[stackFrame.intno], stackFrame.intno);
+        } else {
+            logger_error("CPU exception in kernel: %s (IRQ%d)!",
+                __cpu_exception_string[stackFrame.intno], stackFrame.intno);
+
+            PANIC("CPU exception in kernel (IRQ%d): %s!\n", stackFrame.intno, __cpu_exception_string[stackFrame.intno]);
+        }
+    } else if (stackFrame.intno < 48) {
+        interrupts::interrupts_disable_holding();
+
+        int irq = stackFrame.intno - 32;
+
+        if(irq == 0) {
+            hegel::system_tick();
+            // TODO: scheduler
+        } else {
+            // TODO: use interrupt dispatcher
+        }
+
+        interrupts::interrupts_enable_holding();
+    } else if(stackFrame.intno == 127) {
+        // yield
+        interrupts::interrupts_disable_holding();
+
+        // TODO: schedule yield
+
+        interrupts::interrupts_enable_holding();
+    } else if(stackFrame.intno == 128) {
+        // syscall
+        x86::sti();
+
+        logger_debug("syscall");
+
+        x86::cli();
     }
 
     pic_ack(stackFrame.intno);

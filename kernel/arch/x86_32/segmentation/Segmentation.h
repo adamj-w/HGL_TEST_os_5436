@@ -92,6 +92,10 @@ struct __packed GDTEntry
     }
 };
 
+#define HEGEL_KERNEL_CODE_SEG (0x08)
+#define HEGEL_KERNEL_DATA_SEG (0x10)
+#define HEGEL_PROCESS_CODE_SEG (0x1B)
+
 void segmentation_initialize();
 
 }

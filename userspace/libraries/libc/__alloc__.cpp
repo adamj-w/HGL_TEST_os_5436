@@ -71,7 +71,7 @@ static long long l_warningCount = 0;
 static long long l_errorCount = 0;
 static long long l_possibleOverruns = 0;
 
-extern "C" void liballoc_dump()
+extern "C" void liballoc_dump(void* verbose)
 {
     AllocMajor* maj = l_memRoot;
     AllocMinor* min = nullptr;
@@ -86,10 +86,12 @@ extern "C" void liballoc_dump()
     while(maj != nullptr) {
         printf("liballoc: 0x%X: total = %i, used = %i\n", (unsigned int)maj, (int)maj->size, (int)maj->usage);
 
-        min = maj->first;
-        while(min != nullptr) {
-            printf("liballoc:    0x%X: %i bytes\n", (unsigned int)min, (int)min->size);
-            min = min->next;
+        if((bool)verbose == true) {
+            min = maj->first;
+            while(min != nullptr) {
+                printf("liballoc:    0x%X: %i bytes\n", (unsigned int)min, (int)min->size);
+                min = min->next;
+            }
         }
 
         maj = maj->next;
