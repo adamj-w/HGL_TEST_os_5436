@@ -5,7 +5,9 @@
 
 #include <libsystem/Logger.h>
 #include <kernel/system/System.h>
+#include <kernel/scheduler/Scheduler.h>
 #include <kernel/interrupts/Interrupts.h>
+#include <kernel/interrupts/Dispatcher.h>
 
 #include "arch/Arch.h"
 
@@ -52,7 +54,7 @@ extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFr
 {
     ASSERT_INTERRUPTS_NOT_RETAINED(); // no manual calling
 
-    // TODO: optimize control block placement
+    // TODO L: optimize control block placement
     if(stackFrame.intno < 32) {
         if(stackFrame.cs == HEGEL_PROCESS_CODE_SEG) {
             logger_error("CPU exception in process %d: %s (IRQ%d)!", 
@@ -62,7 +64,7 @@ extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFr
             logger_error("CPU exception in kernel: %s (IRQ%d)!",
                 __cpu_exception_string[stackFrame.intno], stackFrame.intno);
 
-            PANIC("CPU exception in kernel (IRQ%d): %s!\n", stackFrame.intno, __cpu_exception_string[stackFrame.intno]);
+            panic("CPU exception in kernel (IRQ%d): %s!\n", stackFrame.intno, __cpu_exception_string[stackFrame.intno]);
         }
     } else if (stackFrame.intno < 48) {
         interrupts::interrupts_disable_holding();
@@ -71,9 +73,9 @@ extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFr
 
         if(irq == 0) {
             hegel::system_tick();
-            // TODO: scheduler
+            esp = sched::schedule(esp);
         } else {
-            // TODO: use interrupt dispatcher
+            interrupts::dispatcher_dispatch(irq);
         }
 
         interrupts::interrupts_enable_holding();
@@ -81,7 +83,7 @@ extern "C" uint32_t interrupts_handler(uint32_t esp, InterruptStackFrame stackFr
         // yield
         interrupts::interrupts_disable_holding();
 
-        // TODO: schedule yield
+        esp = sched::schedule(esp);
 
         interrupts::interrupts_enable_holding();
     } else if(stackFrame.intno == 128) {

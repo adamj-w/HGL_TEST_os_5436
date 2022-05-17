@@ -1,7 +1,7 @@
 #pragma once
 
 #include <libsystem/ErrorOr.h>
-#include <libsystem/RefCounted.h>
+#include <libutil/RefCounted.h>
 #include <libsystem/Types.h>
 
 namespace hegel {

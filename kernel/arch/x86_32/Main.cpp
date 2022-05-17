@@ -16,7 +16,7 @@
 
 #include <libsystem/__plugs__.h>
 #include <libsystem/Logger.h>
-#include <libsystem/RefPtr.h>
+#include <libutil/RefPtr.h>
 #include <hegel/extras.h>
 
 #include <arch/Arch.h>
@@ -46,7 +46,7 @@ extern "C" void arch_main(uint32_t multiboot_magic, uintptr_t multiboot_addr)
 
     if(!multiboot.is_valid()) {
         logger_fatal("Invalid bootloader with magic %#010X, please boot with multiboot2 specification", multiboot_magic);
-        PANIC("Invalid bootloader, please try with valid multiboot2 loader.\n");
+        panic("Invalid bootloader, please try with valid multiboot2 loader.\n");
     } else {
         logger_info("Found valid bootloader with name \"%s\"", multiboot.bootloader());
     }

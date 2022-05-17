@@ -54,12 +54,12 @@ void memory_free(uintptr_t addr, size_t size)
 
 void assert_failed() 
 {
-    PANIC("Assertion failed in kernel.\n");
+    panic("Assertion failed in kernel.\n");
 }
 
 void assert_not_reached_reached() 
 {
-    PANIC("Reached unreachable assertion in kernel.\n");
+    panic("Reached unreachable assertion in kernel.\n");
 }
 
 }

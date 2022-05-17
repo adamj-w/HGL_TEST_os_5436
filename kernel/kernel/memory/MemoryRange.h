@@ -1,5 +1,7 @@
 #pragma once
 
+#include <kernel/Forward.h>
+
 #include <stdint.h>
 #include <stddef.h>
 
@@ -8,7 +10,6 @@ namespace memory {
 #define MEMORY_NONE (0)
 #define MEMORY_USER (1 << 0)
 #define MEMORY_CLEAR (1 << 1)
-typedef unsigned int MemoryFlags;
 
 class MemoryRange
 {

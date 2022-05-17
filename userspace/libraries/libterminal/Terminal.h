@@ -2,7 +2,7 @@
 
 #include "Cell.h"
 
-#include <libsystem/Unicode.h>
+#include <libutil/Unicode.h>
 
 namespace hegel::term {
 

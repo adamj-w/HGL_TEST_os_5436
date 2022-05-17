@@ -3,5 +3,6 @@ set disassembly-flavor intel
 symbol-file build/hegel-x86_32-develop/kernel.bin
 target remote localhost:1234
 break arch_main
+break hegel::PANIC
 #layout split
 continue

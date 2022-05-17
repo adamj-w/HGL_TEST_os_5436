@@ -1,8 +1,8 @@
 #pragma once
 
-#include <libsystem/Iteration.h>
+#include <libutil/Iteration.h>
 //#include <libsystem/Callback.h>
-#include <libsystem/Move.h>
+#include <libutil/Move.h>
 #include <libsystem/Types.h>
 #include <libsystem/Assert.h>
 
@@ -209,7 +209,7 @@ public:
         return ret;
     }
 
-    void remove(T& value)
+    void remove(T value)
     {
         LinkedListItem<T>* cur = _head;
 

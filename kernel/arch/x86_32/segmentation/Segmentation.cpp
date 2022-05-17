@@ -63,4 +63,8 @@ void segmentation_initialize()
     logger_info("Successfully loaded GDT.");
 }
 
+void set_kernel_stack(uint32_t stack) {
+    gdt_tss.esp0 = stack;
+}
+
 }

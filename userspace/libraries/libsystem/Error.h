@@ -12,7 +12,8 @@
     __ITEM(NO_SUCH_PROCESS) \
     __ITEM(NO_CHILD_PROCESS) \
     __ITEM(OUT_OF_MEMORY) \
-    __ITEM(ALREADY_PRESENT)
+    __ITEM(ALREADY_PRESENT) \
+    __ITEM(TIMEOUT)
 
 enum class Result
 {

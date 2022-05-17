@@ -98,4 +98,6 @@ struct __packed GDTEntry
 
 void segmentation_initialize();
 
+void set_kernel_stack(uint32_t stack);
+
 }

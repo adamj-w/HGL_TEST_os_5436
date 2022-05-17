@@ -76,7 +76,7 @@ const char* cpuid_vendor_name(void)
 static void _failed_feat_check(const char* feature)
 {
     logger_fatal("System does not support \"%s\"", feature);
-    PANIC("CPU doesn't support all required features\n");
+    panic("CPU doesn't support all required features\n");
 }
 
 void cpuid_check_system_requirements(void)

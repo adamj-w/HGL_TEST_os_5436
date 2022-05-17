@@ -133,7 +133,7 @@ memory::MemoryRange virtual_alloc(void* address_space, memory::MemoryRange prang
         }
     }
 
-    hegel::PANIC("Out of virtual memory!\n");
+    panic("Out of virtual memory!\n");
 }
 
 void virtual_free(void* address_space, memory::MemoryRange vrange) 

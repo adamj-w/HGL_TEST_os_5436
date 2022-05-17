@@ -4,7 +4,8 @@
 #include <libsystem/Types.h>
 #include <libsystem/Error.h>
 
-#include <kernel/memory/MemoryRange.h>
+//#include <kernel/memory/MemoryRange.h>
+#include <kernel/Forward.h>
 
 #ifndef ARCH_PAGE_SIZE
 #define ARCH_PAGE_SIZE (4096)
@@ -17,7 +18,7 @@ namespace hegel::arch {
 void disable_interrupts();
 void enable_interrupts();
 
-// TODO: remove
+// TODO L: remove
 void temporary_graphics_init();
 
 void stop() __noreturn;
@@ -30,6 +31,11 @@ void yield();
 
 void shutdown();
 
+void save_context(proc::Thread* thread);
+void load_context(proc::Thread* thread);
+
+void thread_go(proc::Thread* thread);
+
 size_t get_page_size();
 
 void* kernel_address_space();
@@ -37,8 +43,6 @@ void* kernel_address_space();
 void virtual_initialize();
 
 void virtual_memory_enable();
-
-struct AddressSpace;
 
 bool virtual_present(void* address_space, uintptr_t virtual_address);
 

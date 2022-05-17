@@ -6,7 +6,7 @@
 
 namespace interrupts {
 
-static bool _can_be_held = false;
+static bool _holding_enabled = false;
 static int _depth = 0;
 
 void interrupts_initialize() {
@@ -17,26 +17,26 @@ void interrupts_initialize() {
 }
 
 bool interrupts_retained() {
-    return _can_be_held && _depth > 0;
+    return !_holding_enabled || _depth > 0;
 }
 
 void interrupts_enable_holding() {
-    _can_be_held = true;
+    _holding_enabled = true;
 }
 
 void interrupts_disable_holding() {
-    _can_be_held = false;
+    _holding_enabled = false;
 }
 
 void interrupts_retain() {
-    if(_can_be_held) {
+    if(_holding_enabled) {
         hegel::arch::disable_interrupts();
         _depth++;
     }
 }
 
 void interrupts_release() {
-    if(_can_be_held) {
+    if(_holding_enabled) {
         assert(_depth > 0);
         _depth--;
 

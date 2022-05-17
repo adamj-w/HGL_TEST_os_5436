@@ -14,10 +14,15 @@
 // .end:
 
 #include <stddef.h>
+#include <string.h>
 
 #include <libsystem/Macros.h>
+#include <kernel/proc/Thread.h>
+
+using namespace proc;
 
 char fpu_initial_context[512] __aligned(16);
+char fpu_registers[512] __aligned(16);
 
 extern "C" void fpu_initialize() {
     asm volatile("clts");
@@ -35,4 +40,18 @@ extern "C" void fpu_initialize() {
 
     asm volatile("fninit");
     asm volatile("fxsave (%0)" :: "r"(fpu_initial_context));
+}
+
+void fpu_init_context(Thread* thread) {
+    memcpy(thread->fpu_registers, fpu_initial_context, 512);
+}
+
+void fpu_save_context(Thread* thread) {
+    asm volatile("fxsave (%0)" ::"r"(fpu_registers));
+    memcpy(thread->fpu_registers, fpu_registers, 512);
+}
+
+void fpu_load_context(Thread* thread) {
+    memcpy(fpu_registers, thread->fpu_registers, 512);
+    asm volatile("fxrstor (%0)" ::"r"(fpu_registers));
 }

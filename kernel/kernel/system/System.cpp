@@ -1,7 +1,7 @@
 #include "System.h"
 
 #include <libsystem/Logger.h>
-#include <libsystem/Move.h>
+#include <libutil/Move.h>
 #include <stdarg.h>
 
 #include <arch/Arch.h>
@@ -23,12 +23,13 @@ static panic_dump_t _panic_dump_callbacks[PANIC_CALLBACK_COUNT] = {
     { .func = nullptr, .userdata = nullptr }
 };
 
-void PANIC(const char* message, ...) 
+void PANIC(const char* file, int line, const char* message, ...) 
 {
     hegel::plugs::out_stream = move(hegel::plugs::log_stream);
     hegel::plugs::err_stream = move(hegel::plugs::log_stream);
 
     logger_fatal("KERNEL PANIC BEGIN");
+    fprintf((FILE*)&hegel::plugs::log_stream, "At %s:%d\n", file, line);
     va_list va;
     va_start(va, message);
     vfprintf((FILE*)&hegel::plugs::log_stream, message, va);
@@ -64,7 +65,7 @@ void register_panic_dump_callback(panic_dump_callback_t func, void* userdata)
 void system_tick()
 {
     if(_current_tick + 1 < _current_tick) {
-        PANIC("System tick overflow at %u\n", _current_tick);
+        panic("System tick overflow at %u\n", _current_tick);
     }
 
     __atomic_add_fetch(&_current_tick, 1, __ATOMIC_SEQ_CST);
@@ -73,6 +74,10 @@ void system_tick()
 uint64_t get_tick()
 {
     return __atomic_load_n(&_current_tick, __ATOMIC_SEQ_CST);
+}
+
+void system_hang() {
+    while(true) { arch::halt(); }
 }
 
 }

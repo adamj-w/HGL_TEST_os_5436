@@ -1,8 +1,11 @@
 #include "system/System.h"
 #include "memory/Memory.h"
 #include "modules/Modules.h"
+#include "scheduler/Scheduler.h"
 #include "fs/fs.h"
 #include "fs/path.h"
+#include "interrupts/Interrupts.h"
+#include "proc/Tasking.h"
 
 #include <arch/Arch.h>
 
@@ -10,13 +13,44 @@
 #include <string.h>
 #include <libsystem/Logger.h>
 
-#include "kernel/interrupts/Interrupts.h"
 
 namespace hegel {
+
+void file_system_test(const char* filename) {
+    auto fileE = fs::get_file(nullptr, filename);
+    assert(fileE.succeed());
+    auto* file = fileE.value();
+
+    file->ops.open(file);
+
+    char buffer[51];
+    memset(buffer, '\0', 51);
+    file->ops.read(file, 0, buffer, 50);
+
+    logger_debug("Read test.txt with text \"%s\"", buffer);
+
+    file->ops.close(file);
+}
+
+void threadA() {
+    while(1) {
+        putc('A', stdout);
+        arch::yield();
+    }
+}
+
+void threadB() {
+    while(1) {
+        putc('B', stdout);
+        arch::yield();
+    }
+}
 
 void system_main(const boot::Bootdata* bootdata)
 {
     ::memory::memory_initialize(bootdata);
+    sched::scheduler_initialize();
+    proc::tasking_initialize();
 
     arch::temporary_graphics_init();
 
@@ -31,19 +65,23 @@ void system_main(const boot::Bootdata* bootdata)
 
     modules::modules_initialize(bootdata);
 
-    auto fileE = fs::get_file(nullptr, "/test.txt");
-    assert(fileE.succeed());
-    auto* file = fileE.value();
+    file_system_test("/other.bin");
 
-    file->ops.open(file);
+    {
+        interrupts::InterruptsRetainer retainer;
 
-    char buffer[51];
-    memset(buffer, '\0', 51);
-    file->ops.read(file, 0, buffer, 50);
+        auto tA = proc::Thread::spawn(nullptr, "threadA", threadA, nullptr, THREAD_NONE);
+        auto tB = proc::Thread::spawn(nullptr, "threadB", threadB, nullptr, THREAD_NONE);
 
-    logger_info("Read test.txt with text \"%s\"", buffer);
+        tA->go();
+        tB->go();
+        tA.give_ref(); // orphan
+        tB.give_ref();
+        logger_debug("spawned two taskes");
+    }
+    arch::yield();
 
-    PANIC("Reached end of implementation. Please wait for kernel to be completed.\n");
+    panic("Reached end of implementation. Please wait for kernel to be completed.\n");
 }
 
 }

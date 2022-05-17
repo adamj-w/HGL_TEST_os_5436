@@ -9,7 +9,8 @@ namespace hegel {
 
 typedef void (*panic_dump_callback_t)(void* userdata);
 
-void PANIC(const char* message, ...) __noreturn;
+#define panic(__message...) hegel::PANIC(__FILE__, __LINE__, __message)
+void PANIC(const char* file, int line, const char* message, ...) __noreturn;
 void register_panic_dump_callback(panic_dump_callback_t func, void* userdata);
 
 void system_tick();

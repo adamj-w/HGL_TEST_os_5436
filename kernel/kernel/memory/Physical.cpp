@@ -52,7 +52,7 @@ MemoryRange physical_alloc(size_t size)
         }
     }
 
-    hegel::PANIC("Failed to allocate %uKiB of physical memory.\n", size / 1024);
+    panic("Failed to allocate %uKiB of physical memory.\n", size / 1024);
 }
 
 void physical_free(MemoryRange range)

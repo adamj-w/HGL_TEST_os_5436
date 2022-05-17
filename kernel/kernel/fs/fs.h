@@ -1,7 +1,7 @@
 #pragma once
 
 #include <libsystem/Types.h>
-#include <libsystem/LinkedList.h>
+#include <libutil/LinkedList.h>
 #include <libsystem/ErrorOr.h>
 
 #define PATH_SIZE 1024

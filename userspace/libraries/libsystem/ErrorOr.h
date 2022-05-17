@@ -37,6 +37,8 @@ public:
     bool operator!=(T value) {
         return _value != value;
     }
+
+    operator T() { assert(succeed()); return _value;} 
 };
 
 class ErrorOrSizeT : public ResultOr<size_t>
